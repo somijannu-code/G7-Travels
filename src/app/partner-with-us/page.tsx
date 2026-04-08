@@ -234,7 +234,7 @@ export default function PartnerWithUsPage() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Call Us</p>
-                    <p className="font-semibold">+91 98765 43210</p>
+                    <p className="font-semibold">+91 90148 78313</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
