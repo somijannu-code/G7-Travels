@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Mail, Lock, User, ArrowRight, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { createClient } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase' // Ensure you created this file from the previous steps!
 
 interface AuthFormProps {
   onSuccess?: () => void
@@ -17,7 +17,6 @@ interface AuthFormProps {
 
 export function AuthForm({ onSuccess }: AuthFormProps) {
   const router = useRouter()
-  // Initialize Supabase client
   const supabase = createClient()
   
   // UI States
@@ -27,7 +26,7 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
 
-  // Input States
+  // Form Input States
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -51,11 +50,11 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
       if (onSuccess) {
         onSuccess()
       } else {
-        router.push('/book-ride') // Where to send them after logging in
+        router.push('/') // Redirect to home or dashboard after successful login
         router.refresh()
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in. Check your credentials.')
+      setError(err.message || 'Failed to sign in')
     } finally {
       setIsLoading(false)
     }
@@ -87,18 +86,20 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
 
       if (error) throw error
 
-      setMessage('Success! Check your email for the confirmation link.')
+      setMessage('Account created! Check your email for the confirmation link.')
+      
+      // Clear passwords after successful registration
       setPassword('')
       setConfirmPassword('')
     } catch (err: any) {
-      setError(err.message || 'Failed to register.')
+      setError(err.message || 'Failed to register')
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="flex items-center justify-center p-4 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-orange-50 p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -138,7 +139,7 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
 
               {/* Login Tab */}
               <TabsContent value="login">
-                {/* Note the <form> wrapper and onSubmit handler here */}
+                {/* Note the <form> wrapper and onSubmit handler */}
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="login-email">Email Address</Label>
@@ -155,7 +156,6 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
                       />
                     </div>
                   </div>
-                  
                   <div className="space-y-2">
                     <Label htmlFor="login-password">Password</Label>
                     <div className="relative">
@@ -180,23 +180,22 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
                       </Button>
                     </div>
                   </div>
-
                   <div className="flex justify-end">
                     <Button variant="link" className="p-0 h-auto text-sm text-orange-600" type="button">
                       Forgot Password?
                     </Button>
                   </div>
-
+                  {/* type="submit" triggers the form submission */}
                   <Button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white" disabled={isLoading}>
                     {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ArrowRight className="w-4 h-4 mr-2" />}
-                    {isLoading ? 'Logging in...' : 'Login'}
+                    Login
                   </Button>
                 </form>
               </TabsContent>
 
               {/* Register Tab */}
               <TabsContent value="register">
-                {/* Note the <form> wrapper and onSubmit handler here */}
+                {/* Note the <form> wrapper and onSubmit handler */}
                 <form onSubmit={handleRegister} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="register-name">Full Name *</Label>
@@ -253,6 +252,7 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
                     </div>
+                    <p className="text-xs text-slate-500">Min 6 characters</p>
                   </div>
 
                   <div className="space-y-2">
@@ -280,15 +280,20 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
                     </div>
                   </div>
 
+                  {/* type="submit" triggers the form submission */}
                   <Button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white" disabled={isLoading}>
                     {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <User className="w-4 h-4 mr-2" />}
-                    {isLoading ? 'Creating...' : 'Create Account'}
+                    Create Account
                   </Button>
                 </form>
               </TabsContent>
             </Tabs>
           </CardContent>
         </Card>
+
+        <p className="text-center text-sm text-slate-600 mt-6">
+          By continuing, you agree to our <Button variant="link" className="p-0 h-auto text-sm">Terms</Button> and <Button variant="link" className="p-0 h-auto text-sm">Privacy Policy</Button>
+        </p>
       </motion.div>
     </div>
   )
