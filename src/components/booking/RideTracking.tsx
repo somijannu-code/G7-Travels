@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
+import { Switch } from '@/components/ui/switch'
 import { cn } from '@/lib/utils'
-import { MapPin, Car, Clock, Phone, MessageCircle, Navigation, Share2, Shield, Star, CheckCircle, XCircle, Route } from 'lucide-react'
+import { MapPin, Car, Clock, Phone, MessageCircle, Navigation, Share2, Shield, Star, CheckCircle, XCircle, Route, Map } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface Driver {
@@ -62,6 +63,10 @@ export function RideTracking() {
 
   const [progress, setProgress] = useState(0)
   const [otp, setOtp] = useState('')
+  
+  // Live GPS Tracking State
+  const [isGpsEnabled, setIsGpsEnabled] = useState(false)
+  const [userLocation, setUserLocation] = useState<{lat: number, lon: number} | null>(null)
 
   // Simulate ride progress
   useEffect(() => {
@@ -86,6 +91,32 @@ export function RideTracking() {
     return () => clearInterval(timer)
   }, [progress])
 
+  // Handle Live GPS Tracking
+  useEffect(() => {
+    let watchId: number
+    
+    if (isGpsEnabled && 'geolocation' in navigator) {
+      watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude
+          })
+        },
+        (error) => {
+          console.error("Error getting location:", error)
+          setIsGpsEnabled(false)
+          alert("Unable to access GPS location. Please check browser permissions.")
+        },
+        { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
+      )
+    }
+
+    return () => {
+      if (watchId) navigator.geolocation.clearWatch(watchId)
+    }
+  }, [isGpsEnabled])
+
   const statusSteps = [
     { key: 'SEARCHING', label: 'Searching for driver', icon: <MapPin className="h-4 w-4" /> },
     { key: 'DRIVER_ASSIGNED', label: 'Driver assigned', icon: <Car className="h-4 w-4" /> },
@@ -99,7 +130,13 @@ export function RideTracking() {
   }
 
   const handleShareTrip = () => {
-    const shareText = `I'm on a G7 Travels ride from ${rideStatus.pickupLocation} to ${rideStatus.dropLocation}. Track my journey!`
+    let shareText = `I'm on a G7 Travels ride from ${rideStatus.pickupLocation} to ${rideStatus.dropLocation}. Track my journey!`
+    
+    // Append live coordinates if GPS is active
+    if (isGpsEnabled && userLocation) {
+      shareText += `\nMy current coordinates: https://maps.google.com/?q=${userLocation.lat},${userLocation.lon}`
+    }
+
     if (navigator.share) {
       navigator.share({
         title: 'G7 Travels Ride',
@@ -113,8 +150,12 @@ export function RideTracking() {
 
   const handleCallDriver = () => {
     if (rideStatus.driver) {
-      window.open(`tel:${rideStatus.driver.phone}`)
+      window.open(`tel:${rideStatus.driver.phone}`, '_self')
     }
+  }
+
+  const handleEmergencyCall = () => {
+    window.open('tel:9866143321', '_self')
   }
 
   return (
@@ -194,6 +235,23 @@ export function RideTracking() {
               </div>
             </div>
           )}
+
+          {/* Live GPS Tracking Toggle */}
+          <div className="flex flex-col p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-800">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Map className={cn("h-4 w-4", isGpsEnabled ? "text-green-500 animate-pulse" : "text-muted-foreground")} />
+                <span className="text-sm font-medium">Live GPS Tracking</span>
+              </div>
+              <Switch checked={isGpsEnabled} onCheckedChange={setIsGpsEnabled} />
+            </div>
+            {isGpsEnabled && userLocation && (
+              <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                Location active: {userLocation.lat.toFixed(4)}, {userLocation.lon.toFixed(4)}
+              </p>
+            )}
+          </div>
 
           {/* Driver Information */}
           <AnimatePresence>
@@ -333,9 +391,10 @@ export function RideTracking() {
             variant="destructive"
             className="w-full"
             size="lg"
+            onClick={handleEmergencyCall}
           >
-            <Phone className="mr-2 h-4 w-4" />
-            Emergency SOS
+            <Phone className="mr-2 h-4 w-4 animate-pulse" />
+            Emergency SOS (Call 9866143321)
           </Button>
         </CardContent>
       </Card>
