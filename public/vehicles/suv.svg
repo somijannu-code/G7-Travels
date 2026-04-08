@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" fill="none">
+  <rect width="400" height="200" fill="#f8fafc" rx="12"/>
+  <!-- Car Body -->
+  <path d="M40 145 L70 85 L140 70 L280 70 L320 85 L360 145 L360 158 L40 158 Z" fill="#8b5cf6" stroke="#7c3aed" stroke-width="2"/>
+  <!-- Windows -->
+  <path d="M75 95 L138 82 L262 82 L315 95 L300 128 L90 128 Z" fill="#93c5fd" stroke="#3b82f6" stroke-width="1.5"/>
+  <!-- Roof Rails -->
+  <rect x="100" y="65" width="8" height="8" rx="1" fill="#1e293b"/>
+  <rect x="292" y="65" width="8" height="8" rx="1" fill="#1e293b"/>
+  <!-- Wheel Wells -->
+  <circle cx="100" cy="158" r="32" fill="#1e293b"/>
+  <circle cx="300" cy="158" r="32" fill="#1e293b"/>
+  <!-- Wheels -->
+  <circle cx="100" cy="158" r="25" fill="#475569"/>
+  <circle cx="100" cy="158" r="10" fill="#94a3b8"/>
+  <circle cx="300" cy="158" r="25" fill="#475569"/>
+  <circle cx="300" cy="158" r="10" fill="#94a3b8"/>
+  <!-- Headlight -->
+  <ellipse cx="345" cy="125" rx="10" ry="7" fill="#fef08a"/>
+  <!-- Taillight -->
+  <ellipse cx="55" cy="125" rx="8" ry="6" fill="#fca5a5"/>
+  <!-- Door Line -->
+  <line x1="200" y1="75" x2="200" y2="150" stroke="#7c3aed" stroke-width="2"/>
+  <!-- Door Handle -->
+  <rect x="160" y="110" width="20" height="4" rx="1" fill="#7c3aed"/>
+  <rect x="220" y="110" width="20" height="4" rx="1" fill="#7c3aed"/>
+  <!-- Fog Lights -->
+  <circle cx="80" cy="135" r="4" fill="#fef08a"/>
+  <circle cx="320" cy="135" r="4" fill="#fef08a"/>
+  <!-- Grille -->
+  <rect x="328" y="140" width="25" height="12" rx="3" fill="#1e293b"/>
+  <line x1="330" y1="146" x2="351" y2="146" stroke="#475569" stroke-width="1.5"/>
+</svg>

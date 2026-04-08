@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" fill="none">
+  <rect width="400" height="200" fill="#f8fafc" rx="12"/>
+  <!-- Van Body -->
+  <path d="M30 155 L50 70 L130 55 L310 55 L340 70 L370 155 L370 165 L30 165 Z" fill="#f59e0b" stroke="#d97706" stroke-width="2"/>
+  <!-- Roof -->
+  <rect x="60" y="45" width="280" height="15" rx="3" fill="#fbbf24" stroke="#d97706" stroke-width="2"/>
+  <!-- Windows -->
+  <rect x="55" y="75" width="85" height="50" rx="3" fill="#93c5fd" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="145" y="75" width="85" height="50" rx="3" fill="#93c5fd" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="235" y="75" width="85" height="50" rx="3" fill="#93c5fd" stroke="#3b82f6" stroke-width="1.5"/>
+  <!-- Window Dividers -->
+  <line x1="140" y1="75" x2="140" y2="125" stroke="#d97706" stroke-width="2"/>
+  <line x1="230" y1="75" x2="230" y2="125" stroke="#d97706" stroke-width="2"/>
+  <!-- Wheel Wells -->
+  <circle cx="90" cy="165" r="35" fill="#1e293b"/>
+  <circle cx="200" cy="165" r="35" fill="#1e293b"/>
+  <circle cx="310" cy="165" r="35" fill="#1e293b"/>
+  <!-- Wheels -->
+  <circle cx="90" cy="165" r="28" fill="#475569"/>
+  <circle cx="90" cy="165" r="12" fill="#94a3b8"/>
+  <circle cx="200" cy="165" r="28" fill="#475569"/>
+  <circle cx="200" cy="165" r="12" fill="#94a3b8"/>
+  <circle cx="310" cy="165" r="28" fill="#475569"/>
+  <circle cx="310" cy="165" r="12" fill="#94a3b8"/>
+  <!-- Headlight -->
+  <ellipse cx="355" cy="120" rx="12" ry="8" fill="#fef08a"/>
+  <!-- Taillight -->
+  <ellipse cx="45" cy="120" rx="10" ry="7" fill="#fca5a5"/>
+  <!-- Door Lines -->
+  <line x1="140" y1="60" x2="140" y2="155" stroke="#d97706" stroke-width="2"/>
+  <line x1="230" y1="60" x2="230" y2="155" stroke="#d97706" stroke-width="2"/>
+  <!-- Door Handles -->
+  <rect x="100" y="100" width="20" height="4" rx="1" fill="#d97706"/>
+  <rect x="190" y="100" width="20" height="4" rx="1" fill="#d97706"/>
+  <rect x="280" y="100" width="20" height="4" rx="1" fill="#d97706"/>
+  <!-- Grille -->
+  <rect x="338" y="145" width="25" height="12" rx="2" fill="#1e293b"/>
+  <line x1="340" y1="151" x2="361" y2="151" stroke="#475569" stroke-width="1"/>
+  <!-- Side Mirror -->
+  <ellipse cx="50" cy="85" rx="6" ry="4" fill="#fbbf24" stroke="#d97706" stroke-width="1.5"/>
+</svg>
