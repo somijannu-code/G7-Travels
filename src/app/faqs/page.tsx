@@ -8,7 +8,7 @@ import { useState } from 'react'
 
 export default function FAQsPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
-
+ 
   const faqs = [
     {
       category: 'Booking & Rides',
