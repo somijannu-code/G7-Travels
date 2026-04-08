@@ -1,0 +1,988 @@
+// G7 Travels - Hyperlocal Travel Platform Database Schema
+// Service Area: Tirupati, Andhra Pradesh, India
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+enum UserRole {
+  CUSTOMER
+  DRIVER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  BLACKLISTED
+  PENDING_VERIFICATION
+}
+
+enum KYCStatus {
+  NOT_SUBMITTED
+  SUBMITTED
+  VERIFIED
+  REJECTED
+}
+
+model User {
+  id                String     @id @default(cuid())
+  email             String?    @unique
+  phone             String     @unique
+  password          String?
+  name              String
+  role              UserRole   @default(CUSTOMER)
+  status            UserStatus @default(ACTIVE)
+  
+  // Profile
+  avatar            String?
+  dateOfBirth       String?
+  gender            String?
+  language          String     @default("en") // en, te, hi
+  
+  // Location
+  currentLatitude   Float?
+  currentLongitude  Float?
+  address           String?
+  city              String     @default("Tirupati")
+  state             String     @default("Andhra Pradesh")
+  country           String     @default("India")
+  
+  // KYC
+  kycStatus         KYCStatus  @default(NOT_SUBMITTED)
+  aadhaarNumber     String?
+  aadhaarFront      String?
+  aadhaarBack       String?
+  drivingLicense    String?
+  dlFront           String?
+  dlBack            String?
+  passportNumber    String?
+  passportFront     String?
+  passportBack      String?
+  kycVerifiedAt     DateTime?
+  kycRejectedReason String?
+  
+  // Emergency Contact
+  emergencyName     String?
+  emergencyPhone    String?
+  emergencyRelation String?
+  
+  // Wallet & Loyalty
+  walletBalance     Float      @default(0)
+  loyaltyPoints     Int        @default(0)
+  referralCode      String?    @unique
+  referredBy        String?
+  
+  // Settings
+  emailVerified     Boolean    @default(false)
+  phoneVerified     Boolean    @default(false)
+  notificationEmail Boolean    @default(true)
+  notificationSms   Boolean    @default(true)
+  notificationPush  Boolean    @default(true)
+  
+  // Auth
+  otp               String?
+  otpExpiry         DateTime?
+  lastLoginAt       DateTime?
+  lastLoginIp       String?
+  failedLoginAttempts Int      @default(0)
+  lockedUntil       DateTime?
+  
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  // Relations
+  driverProfile     DriverProfile?
+  rides             Ride[]
+  rentalBookings    RentalBooking[]
+  payments          Payment[]
+  reviews           Review[]
+  supportTickets    SupportTicket[]
+  addresses         SavedAddress[]
+  promoUsage        PromoUsage[]
+  notifications     Notification[]
+  
+  @@index([phone])
+  @@index([email])
+  @@index([role])
+  @@index([status])
+}
+
+// ============================================
+// DRIVER & PARTNER PORTAL
+// ============================================
+
+enum DriverStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  BLOCKED
+}
+
+enum VehicleType {
+  HATCHBACK
+  SEDAN
+  SUV
+  PREMIUM_SEDAN
+  LUXURY
+  TEMPO_TRAVELLER
+  MINIBUS
+}
+
+enum DocumentStatus {
+  NOT_UPLOADED
+  PENDING_VERIFICATION
+  APPROVED
+  REJECTED
+  EXPIRING_SOON
+  EXPIRED
+}
+
+model DriverProfile {
+  id                    String         @id @default(cuid())
+  userId                String         @unique
+  user                  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Driver Details
+  driverLicenseNumber   String
+  dlIssueDate           String
+  dlExpiryDate          String
+  dlFrontUrl            String
+  dlBackUrl             String
+  dlStatus              DocumentStatus @default(NOT_UPLOADED)
+  
+  // Vehicle Details
+  vehicleType           VehicleType
+  vehicleNumber         String         @unique
+  vehicleModel          String
+  vehicleYear           Int
+  vehicleColor          String
+  rcNumber              String
+  rcUrl                 String
+  rcStatus              DocumentStatus @default(NOT_UPLOADED)
+  pucCertificateUrl     String
+  pucExpiryDate         String
+  pucStatus             DocumentStatus @default(NOT_UPLOADED)
+  
+  // Commercial Documents
+  permitNumber          String?
+  permitUrl             String?
+  permitExpiryDate      String?
+  permitStatus          DocumentStatus @default(NOT_UPLOADED)
+  insuranceUrl          String
+  insuranceExpiryDate   String
+  insuranceStatus       DocumentStatus @default(NOT_UPLOADED)
+  
+  // Bank Details for Payouts
+  bankName              String
+  accountNumber         String
+  ifscCode              String
+  accountHolderName     String
+  cancelledChequeUrl    String
+  
+  // Availability
+  isOnline              Boolean        @default(false)
+  currentLatitude       Float?
+  currentLongitude      Float?
+  lastLocationUpdate    DateTime?
+  
+  // Service
+  serviceType           String         // "ride", "rental", "both"
+  
+  // Vehicle
+  vehicles             Vehicle[]
+  
+  // Performance
+  totalRides            Int            @default(0)
+  totalRentals          Int            @default(0)
+  rating                Float          @default(0)
+  totalEarnings         Float          @default(0)
+  completedTrips        Int            @default(0)
+  cancelledTrips        Int            @default(0)
+  acceptanceRate        Float          @default(100)
+  
+  // Verification
+  status                DriverStatus   @default(PENDING)
+  backgroundVerified     Boolean        @default(false)
+  backgroundVerifiedAt   DateTime?
+  rejectionReason       String?
+  
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  // Relations
+  rides                 Ride[]
+  rentalAssignments     RentalAssignment[]
+  maintenanceRecords    MaintenanceRecord[]
+  earnings              Earning[]
+}
+
+// ============================================
+// VEHICLE & FLEET MANAGEMENT
+// ============================================
+
+enum VehicleStatus {
+  AVAILABLE
+  IN_USE
+  MAINTENANCE
+  OUT_OF_SERVICE
+  RETIRED
+}
+
+model Vehicle {
+  id                  String         @id @default(cuid())
+  driverId            String?
+
+  vehicleType         VehicleType
+  vehicleNumber       String         @unique
+  make                String
+  model               String
+  year                Int
+  color               String
+  fuelType            String         // petrol, diesel, cng, electric
+  seatingCapacity     Int
+  
+  // Features
+  ac                  Boolean        @default(true)
+  musicSystem         Boolean        @default(false)
+  gpsEnabled          Boolean        @default(true)
+  
+  // Pricing
+  baseFare            Float
+  perKmRate           Float
+  perMinuteRate       Float
+  minimumFare         Float
+  
+  // Rental Pricing
+  hourlyRate          Float?
+  dailyRate           Float?
+  weeklyRate          Float?
+  securityDeposit     Float          @default(2000)
+  
+  // Status
+  status              VehicleStatus  @default(AVAILABLE)
+  currentLocation     String?
+  currentLatitude     Float?
+  currentLongitude    Float?
+  
+  // Documents
+  insuranceExpiry     DateTime
+  pollutionExpiry     DateTime
+  permitExpiry        DateTime?
+  
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  // Relations
+  driverProfile       DriverProfile? @relation(fields: [driverId], references: [id])
+  maintenanceRecords  MaintenanceRecord[]
+  rentalBookings      RentalBooking[]
+
+  @@index([driverId])
+}
+
+// ============================================
+// RIDE BOOKING (ON-DEMAND)
+// ============================================
+
+enum RideStatus {
+  PENDING
+  SEARCHING_DRIVER
+  DRIVER_ASSIGNED
+  ARRIVING
+  ARRIVED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED_BY_USER
+  CANCELLED_BY_DRIVER
+  NO_SHOW
+}
+
+model Ride {
+  id                  String      @id @default(cuid())
+  userId              String
+  user                User        @relation(fields: [userId], references: [id])
+  driverId            String?
+  driver              DriverProfile? @relation(fields: [driverId], references: [id])
+  
+  // Pickup Details
+  pickupLatitude      Float
+  pickupLongitude     Float
+  pickupAddress       String
+  pickupLandmark      String?
+  
+  // Drop Details
+  dropLatitude        Float
+  dropLongitude       Float
+  dropAddress         String
+  dropLandmark        String?
+  
+  // Route
+  routePolyline       String?
+  distance            Float       // in km
+  duration            Int         // in minutes
+  estimatedFare       Float
+  actualFare          Float?
+  
+  // Vehicle
+  vehicleType         VehicleType
+  vehicleNumber       String?
+  
+  // Ride Details
+  status              RideStatus  @default(PENDING)
+  bookingType         String      @default("now") // now, schedule
+  scheduledAt         DateTime?
+  
+  // OTP
+  rideOtp             String?
+  
+  // Timing
+  requestedAt         DateTime    @default(now())
+  driverAssignedAt    DateTime?
+  arrivedAt           DateTime?
+  startedAt           DateTime?
+  completedAt         DateTime?
+  cancelledAt         DateTime?
+  
+  // Cancellation
+  cancelledBy         String?
+  cancellationReason  String?
+  cancellationCharge  Float       @default(0)
+  
+  // Payment
+  paymentId           String?
+  paymentMethod       String?     // upi, card, wallet, cash
+  promoCode           String?
+  discountAmount      Float       @default(0)
+  gstAmount           Float       @default(0)
+  totalAmount         Float?
+  
+  // Safety
+  sosTriggered        Boolean     @default(false)
+  sosTriggeredAt      DateTime?
+  shareLink           String?
+  
+  // Rating
+  ratingByUser        Int?
+  ratingByDriver      Int?
+  feedbackByUser      String?
+  feedbackByDriver    String?
+  tipAmount           Float       @default(0)
+  
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([driverId])
+  @@index([status])
+  @@index([requestedAt])
+}
+
+// ============================================
+// RENTAL CAR BOOKING
+// ============================================
+
+enum RentalStatus {
+  PENDING
+  CONFIRMED
+  PICKED_UP
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum RentalType {
+  HOURLY
+  DAILY
+  WEEKLY
+  CUSTOM
+}
+
+enum RentalDriverType {
+  SELF_DRIVE
+  CHAUFFEUR_DRIVEN
+}
+
+model RentalBooking {
+  id                  String             @id @default(cuid())
+  bookingNumber       String             @unique
+  userId              String
+  user                User               @relation(fields: [userId], references: [id])
+  vehicleId           String
+  vehicle             Vehicle            @relation(fields: [vehicleId], references: [id])
+  
+  // Rental Details
+  rentalType          RentalType
+  driverType          RentalDriverType
+  startDate           DateTime
+  endDate             DateTime
+  duration            Int                // in hours
+  
+  // Pickup & Drop
+  pickupLatitude      Float?
+  pickupLongitude     Float?
+  pickupAddress       String?
+  dropLatitude        Float?
+  dropLongitude       Float?
+  dropAddress         String?
+  
+  // Pricing
+  baseRate            Float
+  mileageLimit        Int                // in km
+  extraKmRate         Float
+  securityDeposit     Float
+  totalAmount         Float
+  discountAmount      Float              @default(0)
+  gstAmount           Float              @default(0)
+  finalAmount         Float
+  
+  // Insurance
+  insuranceIncluded    Boolean            @default(false)
+  insuranceAmount     Float              @default(0)
+  
+  // Add-ons
+  addOns              String?            // JSON array of add-ons
+  addOnsAmount        Float              @default(0)
+  
+  // Status
+  status              RentalStatus       @default(PENDING)
+  
+  // Documents
+  agreementUrl        String?
+  
+  // Inspection
+  pickupInspection    String?            // JSON
+  dropInspection      String?            // JSON
+  pickupPhotos        String?            // JSON array of URLs
+  dropPhotos          String?            // JSON array of URLs
+  fuelLevelPickup     String?            // full, 3/4, 1/2, 1/4, empty
+  fuelLevelDrop       String?
+  odometerPickup      Int?
+  odometerDrop        Int?
+  actualDistance      Int?
+  
+  // Driver Assignment
+  driverId            String?
+  assignment          RentalAssignment?
+
+  // Payment
+  paymentId           String?
+  paymentMethod       String?
+  promoCode           String?
+  
+  // Timing
+  bookedAt            DateTime           @default(now())
+  confirmedAt         DateTime?
+  pickedUpAt          DateTime?
+  droppedAt           DateTime?
+  cancelledAt         DateTime?
+  
+  // Cancellation
+  cancelledBy         String?
+  cancellationReason  String?
+  refundAmount        Float?
+  refundProcessedAt   DateTime?
+  
+  // Extension
+  extensionRequested  Boolean            @default(false)
+  extensionEndDate    DateTime?
+  extensionAmount     Float?
+  extensionApproved   Boolean            @default(false)
+  
+  // Damage
+  damageReported      Boolean            @default(false)
+  damageAmount        Float              @default(0)
+  damageDescription   String?
+  
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  @@index([userId])
+  @@index([vehicleId])
+  @@index([status])
+  @@index([startDate])
+}
+
+model RentalAssignment {
+  id                  String         @id @default(cuid())
+  driverId            String
+  driver              DriverProfile  @relation(fields: [driverId], references: [id])
+  rentalBookingId     String         @unique
+  rentalBooking       RentalBooking  @relation(fields: [rentalBookingId], references: [id], onDelete: Cascade)
+
+  assignedAt          DateTime       @default(now())
+
+  @@index([driverId])
+}
+
+// ============================================
+// PAYMENTS & BILLING
+// ============================================
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum PaymentMethod {
+  UPI
+  CARD
+  NET_BANKING
+  WALLET
+  CASH
+}
+
+model Payment {
+  id                  String        @id @default(cuid())
+  userId              String
+  user                User          @relation(fields: [userId], references: [id])
+  
+  // Payment Details
+  amount              Float
+  paymentMethod       PaymentMethod
+  status              PaymentStatus @default(PENDING)
+  
+  // Gateway
+  gateway             String        // razorpay, payu, stripe
+  transactionId       String?       @unique
+  gatewayOrderId      String?
+  gatewayResponse     String?       // JSON
+  
+  // Context
+  rideId              String?
+  rentalBookingId     String?
+  invoiceNumber       String?       @unique
+  invoiceUrl          String?
+  
+  // GST
+  subtotal            Float
+  gstAmount           Float         @default(0)
+  gstRate             Float         @default(18)
+  totalAmount         Float
+  discountAmount      Float         @default(0)
+  
+  // Refund
+  refundAmount        Float?
+  refundId            String?
+  refundReason        String?
+  refundProcessedAt   DateTime?
+  
+  // Metadata
+  metadata            String?       // JSON
+  
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([transactionId])
+  @@index([status])
+}
+
+// ============================================
+// PROMOTIONS & DISCOUNTS
+// ============================================
+
+enum PromoType {
+  FLAT
+  PERCENTAGE
+  CASHBACK
+  FREE_RIDE
+}
+
+enum PromoStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+  SCHEDULED
+}
+
+model PromoCode {
+  id                  String        @id @default(cuid())
+  code                String        @unique
+  description         String
+  
+  // Discount
+  type                PromoType
+  value               Float
+  maxDiscount         Float?
+  
+  // Usage Limits
+  minBookingAmount    Float         @default(0)
+  maxUses             Int?
+  usedCount           Int           @default(0)
+  maxUsesPerUser      Int           @default(1)
+  
+  // Validity
+  validFrom           DateTime
+  validTo             DateTime
+  status              PromoStatus   @default(ACTIVE)
+  
+  // Applicability
+  applicableRideTypes  String?       // JSON array
+  applicableVehicleTypes String?     // JSON array
+  applicableZones     String?       // JSON array
+
+  // Usage
+  usages              PromoUsage[]
+
+  // Target Users
+  forNewUsers         Boolean       @default(false)
+  forExistingUsers    Boolean       @default(true)
+  
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  @@index([code])
+  @@index([status])
+}
+
+model PromoUsage {
+  id                  String        @id @default(cuid())
+  userId              String
+  user                User          @relation(fields: [userId], references: [id])
+  promoCodeId         String
+  promoCode           PromoCode?    @relation(fields: [promoCodeId], references: [id])
+  rideId              String?
+  rentalBookingId     String?
+  discountAmount      Float
+  
+  usedAt              DateTime      @default(now())
+
+  @@index([userId])
+  @@index([promoCodeId])
+}
+
+// ============================================
+// REVIEWS & RATINGS
+// ============================================
+
+enum ReviewType {
+  RIDE
+  RENTAL
+  DRIVER
+  VEHICLE
+}
+
+model Review {
+  id                  String        @id @default(cuid())
+  userId              String
+  user                User          @relation(fields: [userId], references: [id])
+  
+  reviewType          ReviewType
+  rating              Int           // 1-5
+  comment             String?
+  
+  // Context
+  rideId              String?
+  rentalBookingId     String?
+  driverId            String?
+  vehicleId           String?
+  
+  // Moderation
+  flagged             Boolean       @default(false)
+  flaggedReason       String?
+  
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([rating])
+}
+
+// ============================================
+// SUPPORT & ENGAGEMENT
+// ============================================
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+  ESCALATED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model SupportTicket {
+  id                  String          @id @default(cuid())
+  ticketNumber        String          @unique
+  userId              String
+  user                User            @relation(fields: [userId], references: [id])
+  
+  subject             String
+  description         String
+  category            String          // booking, payment, vehicle, driver, account, other
+  status              TicketStatus    @default(OPEN)
+  priority            TicketPriority  @default(MEDIUM)
+  
+  // Context
+  rideId              String?
+  rentalBookingId     String?
+  
+  // Resolution
+  assignedTo          String?
+  resolution          String?
+  resolvedAt          DateTime?
+  
+  // Attachments
+  attachments         String?         // JSON array of URLs
+  
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([ticketNumber])
+}
+
+// ============================================
+// LOCATIONS & GEO-FENCING
+// ============================================
+
+model SavedAddress {
+  id                  String      @id @default(cuid())
+  userId              String
+  user                User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  label               String      // Home, Office, etc.
+  address             String
+  landmark            String?
+  latitude            Float
+  longitude           Float
+  isDefault           Boolean     @default(false)
+  
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  @@index([userId])
+}
+
+enum ZoneType {
+  CITY_CENTER
+  AIRPORT
+  RAILWAY_STATION
+  BUS_STAND
+  TEMPLE
+  TOURIST_SPOT
+  HOTEL_AREA
+  RESIDENTIAL
+  COMMERCIAL
+  RESTRICTED
+}
+
+model ServiceZone {
+  id                  String      @id @default(cuid())
+  name                String
+  type                ZoneType
+  description         String?
+  
+  // Boundaries (GeoJSON)
+  boundaries          String      // JSON - polygon coordinates
+  
+  // Pricing
+  baseFareMultiplier  Float       @default(1.0)
+  surgeMultiplier     Float       @default(1.0)
+  
+  isActive            Boolean     @default(true)
+  
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  @@index([name])
+  @@index([type])
+}
+
+// ============================================
+// DRIVER PERFORMANCE & MAINTENANCE
+// ============================================
+
+model Earning {
+  id                  String      @id @default(cuid())
+  driverId            String
+  driver              DriverProfile @relation(fields: [driverId], references: [id])
+  
+  // Earning Details
+  rideId              String?
+  rentalBookingId     String?
+  amount              Float
+  commission          Float
+  netEarning          Float
+  
+  // Breakdown
+  baseFare            Float
+  distanceFare        Float
+  timeFare            Float?
+  waitingCharge       Float?      @default(0)
+  tollFee             Float?      @default(0)
+  parkingFee          Float?      @default(0)
+  
+  // Payout
+  payoutId            String?
+  payoutStatus        String      @default("pending") // pending, processed, failed
+  payoutProcessedAt   DateTime?
+  
+  earnedAt            DateTime    @default(now())
+
+  @@index([driverId])
+  @@index([earnedAt])
+}
+
+model MaintenanceRecord {
+  id                  String      @id @default(cuid())
+  vehicleId           String
+  vehicle             Vehicle     @relation(fields: [vehicleId], references: [id])
+  driverId            String?
+  driver              DriverProfile? @relation(fields: [driverId], references: [id])
+  
+  type                String      // service, repair, inspection, accident
+  description         String
+  cost                Float
+  
+  // Documents
+  reportUrl           String?
+  invoiceUrl          String?
+  
+  // Status
+  status              String      @default("completed") // scheduled, in_progress, completed
+  
+  scheduledDate       DateTime?
+  completedAt         DateTime?
+  
+  createdAt           DateTime    @default(now())
+
+  @@index([vehicleId])
+}
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+
+enum NotificationType {
+  BOOKING_CONFIRMED
+  DRIVER_ASSIGNED
+  RIDE_STARTED
+  RIDE_COMPLETED
+  PAYMENT_SUCCESS
+  PAYMENT_FAILED
+  PROMO_OFFER
+  SYSTEM_ANNOUNCEMENT
+  SUPPORT_REPLY
+}
+
+model Notification {
+  id                  String              @id @default(cuid())
+  userId              String
+  user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type                NotificationType
+  title               String
+  message             String
+  data                String?             // JSON
+  
+  // Delivery
+  sentVia             String?             // email, sms, push
+  readAt              DateTime?
+  
+  // Context
+  rideId              String?
+  rentalBookingId     String?
+  
+  createdAt           DateTime            @default(now())
+
+  @@index([userId])
+  @@index([readAt])
+}
+
+// ============================================
+// ADMIN & SETTINGS
+// ============================================
+
+model SystemSettings {
+  id                  String      @id @default(cuid())
+  key                 String      @unique
+  value               String
+  description         String?
+  
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  @@index([key])
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  BOOKING
+  PAYMENT
+  CANCELLATION
+  REFUND
+}
+
+model AuditLog {
+  id                  String      @id @default(cuid())
+  userId              String?
+  action              AuditAction
+  entity              String
+  entityId            String?
+  changes             String?     // JSON
+  ipAddress           String?
+  userAgent           String?
+  
+  createdAt           DateTime    @default(now())
+
+  @@index([userId])
+  @@index([entity])
+  @@index([createdAt])
+}
+
+// ============================================
+// DYNAMIC PRICING
+// ============================================
+
+enum SurgeStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model SurgePricing {
+  id                  String      @id @default(cuid())
+  zoneId              String
+  zoneName            String
+  multiplier          Float       // e.g., 1.5x
+  
+  status              SurgeStatus @default(ACTIVE)
+  
+  startTime           DateTime
+  endTime             DateTime?
+  reason              String?     // high_demand, weather, event, etc.
+  
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  @@index([zoneId])
+  @@index([status])
+}
