@@ -4,9 +4,8 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { LocationAutocomplete } from '@/components/maps/LocationAutocomplete'
-import { MapPin, Car, Clock, Route, IndianRupee, CheckCircle2, Loader2 } from 'lucide-react'
+import { MapPin, Car, Clock, Route, IndianRupee, CheckCircle2, Loader2, Phone } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface FareEstimate {
@@ -16,6 +15,7 @@ interface FareEstimate {
   distanceFare: number
   timeFare: number
   gstAmount: number
+  discountAmount: number
   surgeMultiplier: number
   estimatedFare: number
   totalAmount: number
@@ -24,6 +24,7 @@ interface FareEstimate {
     distanceCharge: number
     timeCharge: number
     gst: number
+    discount: number
     surgeCharge: number
   }
 }
@@ -90,8 +91,27 @@ export function RideBookingWithMap() {
   }
 
   const handleBookRide = () => {
-    // TODO: Implement ride booking flow
-    alert('Ride booking will be implemented here. This will connect to the booking API.')
+    if (!estimate) return
+
+    setIsLoading(true)
+    
+    const vehicleName = vehicleTypes.find(v => v.id === vehicleType)?.name || vehicleType
+
+    const message = `*🚕 New Map Ride Booking (G7 Travels)*
+    
+*Pickup:* ${pickupLocation}
+*Drop:* ${dropLocation}
+*Vehicle:* ${vehicleName}
+*Total Fare:* ₹${estimate.totalAmount}
+
+Please confirm my booking. Thank you!`
+
+    // 91 is the country code for India
+    const whatsappUrl = `https://wa.me/919014878313?text=${encodeURIComponent(message)}`
+    
+    // Open WhatsApp in a new tab
+    window.open(whatsappUrl, '_blank')
+    setIsLoading(false)
   }
 
   return (
@@ -274,8 +294,12 @@ export function RideBookingWithMap() {
                         <span className="text-muted-foreground">GST (18%)</span>
                         <span>₹{estimate.breakdown.gst}</span>
                       </div>
+                      <div className="flex justify-between text-sm text-green-600 font-medium bg-green-50/50 p-1 rounded">
+                        <span>Automatic Discount (Time + GST Waiver)</span>
+                        <span>-₹{estimate.breakdown.discount}</span>
+                      </div>
                       {estimate.surgeMultiplier > 1 && (
-                        <div className="flex justify-between text-sm text-orange-600">
+                        <div className="flex justify-between text-sm text-orange-600 mt-1">
                           <span>Surge Multiplier ({estimate.surgeMultiplier}x)</span>
                           <span>+₹{estimate.breakdown.surgeCharge}</span>
                         </div>
@@ -292,14 +316,14 @@ export function RideBookingWithMap() {
                       </div>
                     </div>
 
-                    {/* Book Button */}
+                    {/* Book via WhatsApp Button */}
                     <Button
                       onClick={handleBookRide}
-                      className="w-full"
+                      className="w-full bg-green-600 hover:bg-green-700 text-white"
                       size="lg"
                     >
-                      <Car className="mr-2 h-4 w-4" />
-                      Book This Ride
+                      <Phone className="mr-2 h-4 w-4" />
+                      Book via WhatsApp - ₹{estimate.totalAmount}
                     </Button>
                   </CardContent>
                 </Card>
