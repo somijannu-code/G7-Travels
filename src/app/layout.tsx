@@ -14,24 +14,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Z.ai Code Scaffold - AI-Powered Development",
-  description: "Modern Next.js scaffold optimized for AI-powered development with Z.ai. Built with TypeScript, Tailwind CSS, and shadcn/ui.",
-  keywords: ["Z.ai", "Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "AI development", "React"],
-  authors: [{ name: "Z.ai Team" }],
+  title: "G7 Travels | Tirupati's Trusted Travel Partner",
+  description: "Your reliable travel partner for on-demand rides, car rentals, and pilgrimage packages in Tirupati and surrounding areas.",
+  keywords: ["G7 Travels", "Tirupati taxi", "car rental Tirupati", "cab booking Tirupati", "Tirumala travel", "airport transfers Tirupati"],
+  authors: [{ name: "G7 Travels" }],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "/g7travels.png",
   },
   openGraph: {
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
-    url: "https://chat.z.ai",
-    siteName: "Z.ai",
+    title: "G7 Travels | Tirupati's Trusted Travel Partner",
+    description: "Book safe and secure rides, rental cars, and outstation trips in Tirupati with G7 Travels.",
+    url: "https://g7travels.in", 
+    siteName: "G7 Travels",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
+    title: "G7 Travels | Tirupati's Trusted Travel Partner",
+    description: "Book safe and secure rides, rental cars, and outstation trips in Tirupati with G7 Travels.",
   },
 };
 
