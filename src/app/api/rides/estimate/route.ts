@@ -4,12 +4,12 @@ import { db } from '@/lib/db'
 // Vehicle pricing configuration for Tirupati area
 // Updated to 20 Rs per KM as requested
 const VEHICLE_PRICING = {
-  HATCHBACK: { baseFare: 30, perKmRate: 20, perMinuteRate: 1, minimumFare: 50 },
-  SEDAN: { baseFare: 40, perKmRate: 20, perMinuteRate: 1.5, minimumFare: 60 },
-  SUV: { baseFare: 50, perKmRate: 20, perMinuteRate: 2, minimumFare: 80 },
-  PREMIUM_SEDAN: { baseFare: 70, perKmRate: 20, perMinuteRate: 2.5, minimumFare: 100 },
+  HATCHBACK: { baseFare: 30, perKmRate: 30, perMinuteRate: 1, minimumFare: 50 },
+  SEDAN: { baseFare: 40, perKmRate: 30, perMinuteRate: 1.5, minimumFare: 60 },
+  SUV: { baseFare: 50, perKmRate: 30, perMinuteRate: 2, minimumFare: 80 },
+  PREMIUM_SEDAN: { baseFare: 30, perKmRate: 20, perMinuteRate: 2.5, minimumFare: 100 },
   TEMPO_TRAVELLER: { baseFare: 100, perKmRate: 20, perMinuteRate: 3, minimumFare: 150 },
-  MINIBUS: { baseFare: 150, perKmRate: 20, perMinuteRate: 4, minimumFare: 200 }
+  MINIBUS: { baseFare: 100, perKmRate: 20, perMinuteRate: 4, minimumFare: 200 }
 }
 
 // Calculate distance between two coordinates (Haversine formula) in km
