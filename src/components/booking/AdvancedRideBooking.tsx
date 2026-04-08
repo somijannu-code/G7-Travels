@@ -896,6 +896,7 @@ Please confirm my booking. Thank you!`
             variant="destructive"
             className="w-full"
             size="lg"
+            onClick={() => window.location.href = 'tel:9866143321'}
           >
             <Phone className="mr-2 h-4 w-4" />
             Emergency SOS - Call 24/7 Support
