@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     // Get pricing
     const pricing = VEHICLE_PRICING[vehicleTypeUpper as keyof typeof VEHICLE_PRICING]
 
-    // Calculate fare
+    // Calculate fare components
     const distanceFare = distance * pricing.perKmRate
     const timeFare = duration * pricing.perMinuteRate
     let estimatedFare = pricing.baseFare + distanceFare + timeFare
@@ -123,9 +123,13 @@ export async function POST(request: NextRequest) {
       estimatedFare = pricing.minimumFare
     }
 
-    // Add GST (18%)
+    // Calculate GST (18%)
     const gstAmount = estimatedFare * 0.18
-    const totalAmount = estimatedFare + gstAmount
+    const subTotalAmount = estimatedFare + gstAmount
+
+    // AUTOMATIC DISCOUNT: Give minus for all GST and Time Charges
+    const discountAmount = timeFare + gstAmount
+    const totalAfterDiscount = subTotalAmount - discountAmount
 
     // Check for surge pricing SAFELY
     let surgeMultiplier = 1.0
@@ -146,12 +150,11 @@ export async function POST(request: NextRequest) {
         surgeMultiplier = activeSurge.multiplier
       }
     } catch (dbError) {
-      // If the database is down or the table doesn't exist yet, we catch the error here
-      // This prevents the whole API route from crashing and returning a 500 error.
       console.warn('Could not fetch surge pricing from database. Defaulting to 1.0x surge.', dbError)
     }
 
-    const finalAmount = totalAmount * surgeMultiplier
+    // Apply surge to the discounted total
+    const finalAmount = totalAfterDiscount * surgeMultiplier
 
     return NextResponse.json({
       success: true,
@@ -162,6 +165,7 @@ export async function POST(request: NextRequest) {
         distanceFare: Math.round(distanceFare),
         timeFare: Math.round(timeFare),
         gstAmount: Math.round(gstAmount),
+        discountAmount: Math.round(discountAmount), // Added discount exposure
         surgeMultiplier,
         estimatedFare: Math.round(estimatedFare),
         totalAmount: Math.round(finalAmount),
@@ -170,7 +174,8 @@ export async function POST(request: NextRequest) {
           distanceCharge: Math.round(distanceFare),
           timeCharge: Math.round(timeFare),
           gst: Math.round(gstAmount),
-          surgeCharge: surgeMultiplier > 1.0 ? Math.round(totalAmount * (surgeMultiplier - 1)) : 0
+          discount: Math.round(discountAmount), // Added discount breakdown
+          surgeCharge: surgeMultiplier > 1.0 ? Math.round(totalAfterDiscount * (surgeMultiplier - 1)) : 0
         }
       }
     })
