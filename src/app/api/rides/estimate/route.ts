@@ -127,21 +127,28 @@ export async function POST(request: NextRequest) {
     const gstAmount = estimatedFare * 0.18
     const totalAmount = estimatedFare + gstAmount
 
-    // Check for surge pricing
+    // Check for surge pricing SAFELY
     let surgeMultiplier = 1.0
-    const activeSurge = await db.surgePricing.findFirst({
-      where: {
-        status: 'ACTIVE',
-        startTime: { lte: new Date() },
-        OR: [
-          { endTime: null },
-          { endTime: { gte: new Date() } }
-        ]
-      }
-    })
+    
+    try {
+      const activeSurge = await db.surgePricing.findFirst({
+        where: {
+          status: 'ACTIVE',
+          startTime: { lte: new Date() },
+          OR: [
+            { endTime: null },
+            { endTime: { gte: new Date() } }
+          ]
+        }
+      })
 
-    if (activeSurge) {
-      surgeMultiplier = activeSurge.multiplier
+      if (activeSurge) {
+        surgeMultiplier = activeSurge.multiplier
+      }
+    } catch (dbError) {
+      // If the database is down or the table doesn't exist yet, we catch the error here
+      // This prevents the whole API route from crashing and returning a 500 error.
+      console.warn('Could not fetch surge pricing from database. Defaulting to 1.0x surge.', dbError)
     }
 
     const finalAmount = totalAmount * surgeMultiplier
