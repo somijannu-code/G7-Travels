@@ -153,7 +153,7 @@ export default function FAQPage() {
                   Contact Support
                 </Button>
               </Link>
-              <a href="tel:+919876543210">
+              <a href="tel:+919014878313">
                 <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white/10">
                   <Clock className="w-5 h-5 mr-2" />
                   Call Now
