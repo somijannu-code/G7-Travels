@@ -23,6 +23,7 @@ interface FareEstimate {
   distanceFare: number
   timeFare: number
   gstAmount: number
+  discountAmount: number
   surgeMultiplier: number
   estimatedFare: number
   totalAmount: number
@@ -31,6 +32,7 @@ interface FareEstimate {
     distanceCharge: number
     timeCharge: number
     gst: number
+    discount: number
     surgeCharge: number
   }
 }
@@ -240,7 +242,7 @@ export function AdvancedRideBooking() {
     }
   }
 
-  const calculateDiscount = (): number => {
+  const calculatePromoDiscount = (): number => {
     if (!estimate || !appliedPromo) return 0
 
     const amount = estimate.totalAmount
@@ -260,7 +262,53 @@ export function AdvancedRideBooking() {
 
   const getFinalAmount = (): number => {
     if (!estimate) return 0
-    return Math.max(0, estimate.totalAmount - calculateDiscount())
+    return Math.max(0, estimate.totalAmount - calculatePromoDiscount())
+  }
+
+  // Handle WhatsApp Booking submission
+  const handleWhatsAppBooking = () => {
+    if (!estimate) return
+
+    setIsLoading(true)
+
+    // Build the message details
+    const stopsText = stops.length > 0 ? `\n*Stops:* ${stops.map(s => s.location).join(' -> ')}` : ''
+    const scheduleText = scheduleRide 
+      ? `\n*Scheduled For:* ${scheduleDate ? format(scheduleDate, "PPP") : ''} at ${scheduleTime}` 
+      : '\n*Time:* Immediate (Ride Now)'
+    
+    // Gather Preferences
+    const activePrefs = [
+      acRequired ? 'AC Required' : '',
+      needChildSeat ? 'Child Seat Needed' : '',
+      wheelchairAccessible ? 'Wheelchair Accessible' : '',
+      petFriendly ? 'Pet Friendly' : '',
+      femaleDriver ? 'Female Driver Requested' : '',
+      musicPreference !== 'none' ? `Music: ${musicPreference}` : ''
+    ].filter(Boolean).join(', ')
+    
+    const preferencesText = activePrefs ? `\n*Preferences:* ${activePrefs}` : ''
+    const notesText = tripNotes ? `\n*Trip Notes:* ${tripNotes}` : ''
+    const promoText = appliedPromo ? `\n*Promo Applied:* ${appliedPromo.code} (Saved ₹${calculatePromoDiscount()})` : ''
+
+    const vehicleName = vehicleTypes.find(v => v.id === vehicleType)?.name || vehicleType
+
+    const message = `*🚕 New Advanced Ride Booking (G7 Travels)*
+    
+*Pickup:* ${pickupLocation}
+*Drop:* ${dropLocation}${stopsText}${scheduleText}
+*Vehicle:* ${vehicleName}
+*Payment Method:* ${paymentMethod}
+*Total Fare:* ₹${getFinalAmount()}${promoText}${preferencesText}${notesText}
+
+Please confirm my booking. Thank you!`
+
+    // 91 is the country code for India, followed by your provided number
+    const whatsappUrl = `https://wa.me/919014878313?text=${encodeURIComponent(message)}`
+    
+    // Open WhatsApp in a new tab
+    window.open(whatsappUrl, '_blank')
+    setIsLoading(false)
   }
 
   return (
@@ -711,8 +759,12 @@ export function AdvancedRideBooking() {
                         <span className="text-muted-foreground">GST (18%)</span>
                         <span>₹{estimate.breakdown.gst}</span>
                       </div>
+                      <div className="flex justify-between text-sm text-green-600 font-medium bg-green-50/50 p-1 rounded">
+                        <span>Automatic Discount (Time + GST Waiver)</span>
+                        <span>-₹{estimate.breakdown.discount}</span>
+                      </div>
                       {estimate.surgeMultiplier > 1 && (
-                        <div className="flex justify-between text-sm text-orange-600">
+                        <div className="flex justify-between text-sm text-orange-600 mt-1">
                           <span>Surge Multiplier ({estimate.surgeMultiplier}x)</span>
                           <span>+₹{estimate.breakdown.surgeCharge}</span>
                         </div>
@@ -721,7 +773,7 @@ export function AdvancedRideBooking() {
 
                     {/* Promo Code Section */}
                     <div className="space-y-2 pt-4 border-t">
-                      <Label>Apply Promo Code</Label>
+                      <Label>Apply Additional Promo Code</Label>
                       <div className="flex gap-2">
                         <Input
                           placeholder="Enter promo code"
@@ -757,7 +809,7 @@ export function AdvancedRideBooking() {
                       {appliedPromo && (
                         <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                           <p className="text-sm text-green-700 dark:text-green-300">
-                            Promo code applied! You saved ₹{calculateDiscount()}
+                            Promo code applied! You saved an extra ₹{calculatePromoDiscount()}
                           </p>
                         </div>
                       )}
@@ -796,8 +848,8 @@ export function AdvancedRideBooking() {
                       </div>
                       {appliedPromo && (
                         <div className="flex justify-between items-center text-green-600">
-                          <span className="font-medium">Discount ({appliedPromo.type === 'PERCENTAGE' ? appliedPromo.discount + '%' : '₹' + appliedPromo.discount})</span>
-                          <span>-₹{calculateDiscount()}</span>
+                          <span className="font-medium">Promo Discount ({appliedPromo.type === 'PERCENTAGE' ? appliedPromo.discount + '%' : '₹' + appliedPromo.discount})</span>
+                          <span>-₹{calculatePromoDiscount()}</span>
                         </div>
                       )}
                       <div className="flex justify-between items-center pt-2 border-t-2 border-primary">
@@ -808,14 +860,15 @@ export function AdvancedRideBooking() {
                       </div>
                     </div>
 
-                    {/* Book Button */}
+                    {/* Book Button - NOW TRIGGERS WHATSAPP */}
                     <Button
-                      className="w-full"
+                      className="w-full bg-green-600 hover:bg-green-700 text-white"
                       size="lg"
                       disabled={isLoading}
+                      onClick={handleWhatsAppBooking}
                     >
-                      <Car className="mr-2 h-4 w-4" />
-                      {scheduleRide ? 'Schedule Ride' : 'Book Now'} - ₹{getFinalAmount()}
+                      <Phone className="mr-2 h-4 w-4" />
+                      {scheduleRide ? 'Schedule via WhatsApp' : 'Book via WhatsApp'} - ₹{getFinalAmount()}
                     </Button>
 
                     {/* Safety Notice */}
