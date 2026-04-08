@@ -132,7 +132,7 @@ export default function SafetyPage() {
               <div className="flex items-center justify-between p-4 bg-red-50 rounded-lg">
                 <div>
                   <p className="text-sm text-muted-foreground">24/7 Emergency Helpline</p>
-                  <p className="text-2xl font-bold text-red-600">+91 98765 43210</p>
+                  <p className="text-2xl font-bold text-red-600">+91 90148 78313</p>
                 </div>
                 <Button variant="destructive" size="lg">
                   Call Now
