@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { MapPin, Car, Clock, ArrowRight, Search, Navigation, Calendar, RotateCcw, IndianRupee } from 'lucide-react'
+import { MapPin, Car, Clock, ArrowRight, Search, Navigation, Calendar, RotateCcw, IndianRupee, Phone } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface VehicleOption {
@@ -26,6 +26,7 @@ interface FareEstimate {
   distanceFare: number
   timeFare: number
   gstAmount: number
+  discountAmount: number
   surgeMultiplier: number
   totalAmount: number
   breakdown: {
@@ -33,6 +34,7 @@ interface FareEstimate {
     distanceCharge: number
     timeCharge: number
     gst: number
+    discount: number
     surgeCharge: number
   }
 }
@@ -103,8 +105,8 @@ export function RideBooking() {
 
     setLoading(true)
     try {
+      // Create Database Record
       const userId = 'demo-user-id'
-
       const response = await fetch('/api/rides', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -124,6 +126,21 @@ export function RideBooking() {
       const data = await response.json()
 
       if (data.success) {
+        // WhatsApp Redirect Logic added here!
+        const vehicleName = VEHICLE_OPTIONS.find(v => v.type === selectedVehicle)?.name || selectedVehicle
+        
+        const message = `*🚕 New Quick Ride Booking (G7 Travels)*
+        
+*Pickup:* ${pickup}
+*Drop:* ${drop}
+*Vehicle:* ${vehicleName}
+*Estimated Fare:* ₹${fareEstimate.totalAmount}
+
+Please confirm my ride. Thank you!`
+
+        const whatsappUrl = `https://wa.me/919014878313?text=${encodeURIComponent(message)}`
+        window.open(whatsappUrl, '_blank')
+
         setStep('confirm')
       }
     } catch (error) {
@@ -413,11 +430,11 @@ export function RideBooking() {
                   Back
                 </Button>
                 <Button
-                  className="flex-1 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700"
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                   disabled={loading}
                   onClick={handleBookRide}
                 >
-                  {loading ? 'Booking...' : 'Book Ride'}
+                  {loading ? 'Booking...' : 'Book via WhatsApp'}
                 </Button>
               </div>
             </CardContent>
@@ -437,7 +454,7 @@ export function RideBooking() {
               </div>
               <h2 className="text-2xl font-bold text-green-800 mb-2">Ride Booked!</h2>
               <p className="text-green-700 mb-6">
-                Your ride has been booked successfully. Driver will arrive shortly.
+                Your ride request has been sent to WhatsApp successfully. Our team will assist you shortly.
               </p>
 
               {fareEstimate && (
@@ -460,8 +477,12 @@ export function RideBooking() {
                       <span className="text-slate-600">GST (18%)</span>
                       <span>₹{fareEstimate.breakdown.gst}</span>
                     </div>
+                    <div className="flex justify-between text-green-600 font-medium">
+                      <span>Automatic Discount</span>
+                      <span>-₹{fareEstimate.breakdown.discount}</span>
+                    </div>
                     {fareEstimate.breakdown.surgeCharge > 0 && (
-                      <div className="flex justify-between text-red-600">
+                      <div className="flex justify-between text-red-600 mt-1">
                         <span>Surge Charge</span>
                         <span>+₹{fareEstimate.breakdown.surgeCharge}</span>
                       </div>
