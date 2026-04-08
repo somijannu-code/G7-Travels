@@ -133,11 +133,11 @@ export default function ContactPage() {
               <CardContent className="space-y-3">
                 <div>
                   <p className="text-sm text-muted-foreground">24/7 Support</p>
-                  <p className="text-lg font-semibold">+91 98765 43210</p>
+                  <p className="text-lg font-semibold">+91 90148 78313</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Booking Line</p>
-                  <p className="text-lg font-semibold">+91 98765 43211</p>
+                  <p className="text-lg font-semibold">+91 98661 43321</p>
                 </div>
               </CardContent>
             </Card>
