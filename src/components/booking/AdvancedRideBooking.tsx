@@ -760,7 +760,7 @@ Please confirm my booking. Thank you!`
                         <span>₹{estimate.breakdown.gst}</span>
                       </div>
                       <div className="flex justify-between text-sm text-green-600 font-medium bg-green-50/50 p-1 rounded">
-                        <span>Automatic Discount (Time + GST Waiver)</span>
+                        <span>Special Discount (Time + GST Waiver)</span>
                         <span>-₹{estimate.breakdown.discount}</span>
                       </div>
                       {estimate.surgeMultiplier > 1 && (
