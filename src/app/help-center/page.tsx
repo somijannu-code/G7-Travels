@@ -41,7 +41,7 @@ export default function HelpCenterPage() {
       icon: <Phone className="w-6 h-6" />,
       title: 'Call Us',
       description: '24/7 Customer Support',
-      value: '+91 98765 43210',
+      value: '+91 90148 78313',
       action: 'Call Now'
     },
     {
