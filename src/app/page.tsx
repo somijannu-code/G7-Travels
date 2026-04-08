@@ -89,9 +89,12 @@ export default function G7TravelsPage() {
       <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
-              G7
-            </div>
+            {/* Added Logo Here */}
+            <img 
+              src="/g7travels.png" 
+              alt="G7 Travels Logo" 
+              className="w-10 h-10 object-contain" 
+            />
             <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
                 G7 Travels
@@ -498,9 +501,12 @@ export default function G7TravelsPage() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center text-white font-bold text-xl">
-                  G7
-                </div>
+                {/* Added Logo Here */}
+                <img 
+                  src="/g7travels.png" 
+                  alt="G7 Travels Logo" 
+                  className="w-10 h-10 object-contain rounded-xl bg-white" 
+                />
                 <div>
                   <h4 className="font-bold text-lg">G7 Travels</h4>
                   <p className="text-xs text-slate-400">Tirupati's Trusted Travel Partner</p>
