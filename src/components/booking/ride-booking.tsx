@@ -478,7 +478,7 @@ Please confirm my ride. Thank you!`
                       <span>₹{fareEstimate.breakdown.gst}</span>
                     </div>
                     <div className="flex justify-between text-green-600 font-medium">
-                      <span>Automatic Discount</span>
+                      <span>Special Discount</span>
                       <span>-₹{fareEstimate.breakdown.discount}</span>
                     </div>
                     {fareEstimate.breakdown.surgeCharge > 0 && (
