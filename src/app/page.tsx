@@ -70,11 +70,11 @@ export default function G7TravelsPage() {
 
   const vehicleTypes = [
     { name: 'Hatchback', capacity: '4', image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&q=80', price: '₹20' },
-    { name: 'Sedan', capacity: '4', image: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=800&q=80', price: '₹20' },
-    { name: 'SUV', capacity: '6', image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80', price: '₹20' },
-    { name: 'Premium Sedan', capacity: '4', image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80', price: '₹20' },
-    { name: 'Tempo Traveller', capacity: '12', image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&q=80', price: '₹20' },
-    { name: 'Minibus', capacity: '20', image: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&q=80', price: '₹20' }
+    { name: 'Sedan', capacity: '4', image: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=800&q=80', price: '₹30' },
+    { name: 'SUV', capacity: '6', image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80', price: '₹40' },
+    { name: 'Premium Sedan', capacity: '4', image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80', price: '₹60' },
+    { name: 'Tempo Traveller', capacity: '12', image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&q=80', price: '₹80' },
+    { name: 'Minibus', capacity: '20', image: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&q=80', price: '₹100' }
   ]
 
   const notifications = [
