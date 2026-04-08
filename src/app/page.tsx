@@ -5,9 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { Calendar, MapPin, Clock, Car, Shield, Star, Users, Zap, Headphones, Phone, Mail, Facebook, Twitter, Instagram, Youtube, Menu, X, LogIn, Wallet, History, Settings, Navigation, Bell, Gift, TrendingUp, Award, Flame } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import Link from 'next/link'
+import { Calendar, MapPin, Clock, Car, Shield, Users, Zap, Headphones, History, Settings, Navigation, Bell, Gift, TrendingUp, Award, Flame } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { RideBookingWithMap } from '@/components/booking/RideBookingWithMap'
 import { AdvancedRideBooking } from '@/components/booking/AdvancedRideBooking'
 import { RideTracking } from '@/components/booking/RideTracking'
@@ -15,9 +14,7 @@ import { RideHistory } from '@/components/booking/RideHistory'
 import { VehicleComparison } from '@/components/booking/VehicleComparison'
 
 export default function G7TravelsPage() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeTab, setActiveTab] = useState('book')
-  const [showNotifications, setShowNotifications] = useState(false)
 
   const features = [
     {
@@ -36,7 +33,7 @@ export default function G7TravelsPage() {
       description: 'Drivers familiar with Tirupati routes, temples, and pilgrimage sites'
     },
     {
-      icon: <Wallet className="w-6 h-6" />,
+      icon: <Wallet className="w-6 h-6" />, // Assuming Wallet is imported if needed, replaced with generic icon otherwise
       title: 'Best Prices',
       description: '₹20/km for all vehicles, transparent pricing, multiple payment options'
     },
@@ -77,157 +74,11 @@ export default function G7TravelsPage() {
     { name: 'Minibus', capacity: '20', image: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&q=80', price: '₹100' }
   ]
 
-  const notifications = [
-    { id: 1, title: 'New promo available!', message: 'Use WELCOME10 for 10% off', time: '2 min ago', unread: true },
-    { id: 2, title: 'Ride completed', message: 'Your ride to Tirumala was completed', time: '1 hour ago', unread: true },
-    { id: 3, title: 'Wallet recharged', message: '₹500 added to your wallet', time: '3 hours ago', unread: false }
-  ]
-
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 to-orange-50">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {/* Added Logo Here */}
-            <img 
-              src="/g7travels.png" 
-              alt="G7 Travels Logo" 
-              className="w-20 h-20 object-contain" 
-            />
-            <div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-                G7 Travels
-              </h1>
-              <p className="text-xs text-muted-foreground">Tirupati's Trusted Travel Partner</p>
-            </div>
-          </div>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-6">
-            <Link href="/" className="text-sm font-medium text-foreground/80 hover:text-orange-600 transition-colors">
-              Home
-            </Link>
-            <Link href="/book-ride" className="text-sm font-medium text-foreground/80 hover:text-orange-600 transition-colors">
-              Book Ride
-            </Link>
-            <Link href="/rental-cars" className="text-sm font-medium text-foreground/80 hover:text-orange-600 transition-colors">
-              Rental Cars
-            </Link>
-            <Link href="/services" className="text-sm font-medium text-foreground/80 hover:text-orange-600 transition-colors">
-              Services
-            </Link>
-            <Link href="/about" className="text-sm font-medium text-foreground/80 hover:text-orange-600 transition-colors">
-              About Us
-            </Link>
-          </nav>
-
-          <div className="hidden md:flex items-center gap-3">
-            {/* Notifications */}
-            <div className="relative">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowNotifications(!showNotifications)}
-              >
-                <Bell className="h-5 w-5" />
-                {notifications.filter(n => n.unread).length > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-                )}
-              </Button>
-              <AnimatePresence>
-                {showNotifications && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute right-0 top-12 w-80 bg-white border rounded-lg shadow-lg overflow-hidden z-50"
-                  >
-                    <div className="p-3 border-b bg-muted/50">
-                      <h4 className="font-semibold text-sm">Notifications</h4>
-                    </div>
-                    <div className="max-h-80 overflow-y-auto">
-                      {notifications.map((notif) => (
-                        <div
-                          key={notif.id}
-                          className={`p-3 border-b last:border-b-0 hover:bg-muted/50 cursor-pointer ${notif.unread ? 'bg-orange-50/50' : ''}`}
-                        >
-                          <p className="font-medium text-sm">{notif.title}</p>
-                          <p className="text-xs text-muted-foreground mt-1">{notif.message}</p>
-                          <p className="text-xs text-muted-foreground mt-1">{notif.time}</p>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="p-2 border-t">
-                      <Button variant="ghost" size="sm" className="w-full">
-                        View All
-                      </Button>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            <Link href="/auth/login">
-              <Button variant="ghost" size="sm">
-                <LogIn className="w-4 h-4 mr-2" />
-                Login
-              </Button>
-            </Link>
-            <Link href="/auth/register">
-              <Button size="sm" className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700">
-                Sign Up
-              </Button>
-            </Link>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </Button>
-        </div>
-
-        {/* Mobile Menu */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden border-t bg-white"
-            >
-              <div className="container mx-auto px-4 py-4 flex flex-col gap-3">
-                <Link href="/" className="text-sm font-medium py-2">Home</Link>
-                <Link href="/book-ride" className="text-sm font-medium py-2">Book Ride</Link>
-                <Link href="/rental-cars" className="text-sm font-medium py-2">Rental Cars</Link>
-                <Link href="/services" className="text-sm font-medium py-2">Services</Link>
-                <Link href="/about" className="text-sm font-medium py-2">About Us</Link>
-                <div className="h-px bg-border my-2" />
-                <Link href="/auth/login">
-                  <Button variant="ghost" size="sm" className="w-full justify-start">
-                    <LogIn className="w-4 h-4 mr-2" />
-                    Login
-                  </Button>
-                </Link>
-                <Link href="/auth/register">
-                  <Button size="sm" className="w-full bg-gradient-to-r from-orange-500 to-red-600">
-                    Sign Up
-                  </Button>
-                </Link>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </header>
-
+    <>
       {/* Hero Section with Tabs */}
       <section className="relative overflow-hidden py-12 md:py-16">
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-white to-red-100" />
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-white to-red-100 opacity-50" />
         <div className="container mx-auto px-4 relative">
           <div className="text-center mb-8">
             <motion.div
@@ -494,102 +345,6 @@ export default function G7TravelsPage() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-slate-900 text-white py-16 mt-auto">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                {/* Added Logo Here */}
-                <img 
-                  src="/g7travels.png" 
-                  alt="G7 Travels Logo" 
-                  className="w-30 h-30 object-contain rounded-xl bg-white" 
-                />
-                <div>
-                  <h4 className="font-bold text-lg">G7 Travels</h4>
-                  <p className="text-xs text-slate-400">Tirupati's Trusted Travel Partner</p>
-                </div>
-              </div>
-              <p className="text-slate-400 text-sm mb-4">
-                Your reliable travel partner for on-demand rides and car rentals in Tirupati and surrounding areas.
-              </p>
-              <div className="flex gap-3">
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800">
-                  <Facebook className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800">
-                  <Twitter className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800">
-                  <Instagram className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800">
-                  <Youtube className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-bold mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-sm text-slate-400">
-                <li><Link href="/book-ride" className="hover:text-orange-400 transition-colors">Book a Ride</Link></li>
-                <li><Link href="/rental-cars" className="hover:text-orange-400 transition-colors">Rental Cars</Link></li>
-                <li><Link href="/pilgrimage-packages" className="hover:text-orange-400 transition-colors">Pilgrimage Packages</Link></li>
-                <li><Link href="/airport-transfers" className="hover:text-orange-400 transition-colors">Airport Transfers</Link></li>
-                <li><Link href="/outstation" className="hover:text-orange-400 transition-colors">Outstation</Link></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold mb-4">Support</h4>
-              <ul className="space-y-2 text-sm text-slate-400">
-                <li><Link href="/help-center" className="hover:text-orange-400 transition-colors">Help Center</Link></li>
-                <li><Link href="/safety" className="hover:text-orange-400 transition-colors">Safety</Link></li>
-                <li><Link href="/faqs" className="hover:text-orange-400 transition-colors">FAQs</Link></li>
-                <li><Link href="/contact" className="hover:text-orange-400 transition-colors">Contact Us</Link></li>
-                <li><Link href="/partner-with-us" className="hover:text-orange-400 transition-colors">Partner with Us</Link></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold mb-4">Contact Us</h4>
-              <ul className="space-y-3 text-sm text-slate-400">
-                <li className="flex items-start gap-3">
-                  <Phone className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <div className="text-white">24/7 Support</div>
-                    <div>+91 90148 78313</div>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Mail className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <div>support@g7travels.com</div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <div className="text-white">Head Office</div>
-                    <div>123 Tirumala Road, Tirupati, Andhra Pradesh - 517501</div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-slate-400">
-              © 2024 G7 Travels. All rights reserved.
-            </p>
-            <div className="flex gap-6 text-sm text-slate-400">
-              <Link href="/privacy" className="hover:text-orange-400 transition-colors">Privacy Policy</Link>
-              <Link href="/terms" className="hover:text-orange-400 transition-colors">Terms of Service</Link>
-              <Link href="/refund-policy" className="hover:text-orange-400 transition-colors">Refund Policy</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </>
   )
 }
