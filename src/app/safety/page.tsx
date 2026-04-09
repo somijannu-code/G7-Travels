@@ -143,7 +143,6 @@ export default function SafetyPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
     </div>
   )
 }
