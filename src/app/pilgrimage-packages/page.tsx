@@ -203,12 +203,13 @@ Please provide more details regarding availability and booking.`
       <div className="grid md:grid-cols-2 gap-8 mb-12">
         {packages.map((pkg, index) => (
           <Card key={index} className="overflow-hidden hover:shadow-xl transition-shadow border-2 border-slate-100 hover:border-orange-200">
-            <div className="relative h-56 bg-slate-200 flex items-center justify-center">
-              {/* If image is missing, it will show a nice gray box with an icon instead of a broken link */}
+            {/* Changed bg-slate-200 to bg-white to ensure a clean background for uncropped images */}
+            <div className="relative h-64 bg-white flex items-center justify-center p-4 border-b border-slate-100">
               <img
                 src={pkg.image}
                 alt={pkg.name}
-                className="w-full h-full object-cover"
+                // Changed object-cover to object-contain so it doesn't crop
+                className="w-full h-full object-contain"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&q=80' // Fallback temple image
                 }}
