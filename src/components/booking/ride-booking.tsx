@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { MapPin, Car, Clock, ArrowRight, Search, Navigation, Calendar, RotateCcw, IndianRupee, Phone, CheckCircle2, Users, Briefcase } from 'lucide-react'
+import { MapPin, Car, Clock, ArrowRight, Search, Navigation, Calendar, RotateCcw, IndianRupee, Phone, CheckCircle2, Users, Briefcase, Building2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Link from 'next/link'
 
 interface FareEstimate {
   distance: number
@@ -190,12 +191,31 @@ Please confirm my ride. Thank you!`
           >
             <Card className="border-0 shadow-lg ring-1 ring-slate-100">
               <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-4">
-                <CardTitle className="text-xl flex items-center gap-2">
-                  <Navigation className="w-5 h-5 text-orange-600" />
-                  Where to?
-                </CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xl flex items-center gap-2">
+                    <Navigation className="w-5 h-5 text-orange-600" />
+                    Where to?
+                  </CardTitle>
+                  
+                  {/* NEW PACKAGES BUTTON */}
+                  <Link href="/pilgrimage-packages">
+                    <Button variant="outline" size="sm" className="hidden sm:flex border-orange-200 text-orange-700 hover:bg-orange-50">
+                      <Building2 className="w-4 h-4 mr-2 text-orange-500" />
+                      View Packages
+                    </Button>
+                  </Link>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4 pt-6">
+                
+                {/* Mobile version of the packages button (shows only on small screens) */}
+                <Link href="/pilgrimage-packages" className="sm:hidden block mb-4">
+                  <Button variant="outline" className="w-full border-orange-200 text-orange-700 bg-orange-50/50 hover:bg-orange-50">
+                    <Building2 className="w-4 h-4 mr-2 text-orange-500" />
+                    View Pilgrimage Packages
+                  </Button>
+                </Link>
+
                 <div className="space-y-2 relative">
                   <Label htmlFor="pickup" className="font-semibold text-slate-700">Pickup Location</Label>
                   <div className="relative group">
