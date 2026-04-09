@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input'
 import { LocationAutocomplete } from '@/components/maps/LocationAutocomplete'
 import { cn } from '@/lib/utils'
 import { format, addDays } from 'date-fns'
-import { MapPin, Car, Clock, Route, IndianRupee, CheckCircle2, Loader2, Calendar as CalendarIcon, Plus, X, Star, Volume2, Snowflake, Wifi, Phone, Navigation, Share2, Heart, Trash2, ChevronRight, Home, Briefcase, User, Wallet, Shield } from 'lucide-react'
+import { MapPin, Car, Clock, Route, IndianRupee, CheckCircle2, Loader2, Calendar as CalendarIcon, Plus, X, Star, Volume2, Snowflake, Phone, Navigation, Share2, Heart, Trash2, ChevronRight, Home, Briefcase, User, Wallet, Shield, CircleDot } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface FareEstimate {
@@ -61,6 +61,8 @@ interface FavoriteLocation {
 }
 
 export function AdvancedRideBooking() {
+  const estimateRef = useRef<HTMLDivElement>(null)
+
   // Basic ride info
   const [pickupLocation, setPickupLocation] = useState('')
   const [pickupCoords, setPickupCoords] = useState({ lat: 0, lon: 0 })
@@ -112,7 +114,7 @@ export function AdvancedRideBooking() {
 
   const vehicleTypes = [
     { id: 'HATCHBACK', name: 'Hatchback', capacity: '4 Passengers', luggage: '2 Bags', image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&q=80', features: ['AC', 'Music'] },
-    { id: 'SEDAN', name: 'Sedan', capacity: '4 Passengers', luggage: '3 Bags', image: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=800&q=80', features: ['AC', 'Music', 'WiFi'] },
+    { id: 'SEDAN', name: 'Sedan', capacity: '4 Passengers', luggage: '3 Bags', image: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=800&q=80', features: ['AC', 'Music', 'WiFi'], popular: true },
     { id: 'SUV', name: 'SUV', capacity: '6 Passengers', luggage: '4 Bags', image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80', features: ['AC', 'Music', 'WiFi', 'More Space'] },
     { id: 'PREMIUM_SEDAN', name: 'Premium Sedan', capacity: '4 Passengers', luggage: '3 Bags', image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80', features: ['AC', 'Music', 'WiFi', 'Leather Seats', 'Water Bottles'] },
     { id: 'TEMPO_TRAVELLER', name: 'Tempo Traveller', capacity: '12 Passengers', luggage: '10 Bags', image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&q=80', features: ['AC', 'Music', 'Pushback Seats', 'Extra Luggage'] },
@@ -152,7 +154,7 @@ export function AdvancedRideBooking() {
     setStops(stops.map(stop =>
       stop.id === id ? { ...stop, location, coords } : stop
     ))
-    setEstimate(null) // Recalculate estimate when stops change
+    setEstimate(null)
   }
 
   const handleApplyPromo = async () => {
@@ -204,7 +206,6 @@ export function AdvancedRideBooking() {
       return
     }
 
-    // Validate all stops
     for (const stop of stops) {
       if (!stop.location || !stop.coords.lat) {
         setError('Please fill in all stop locations')
@@ -235,6 +236,12 @@ export function AdvancedRideBooking() {
       }
 
       setEstimate(data.estimate)
+      
+      // Auto-scroll to the estimate after a short delay to allow render
+      setTimeout(() => {
+        estimateRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 100)
+
     } catch (err: any) {
       setError(err.message || 'Failed to calculate fare')
     } finally {
@@ -244,10 +251,8 @@ export function AdvancedRideBooking() {
 
   const calculatePromoDiscount = (): number => {
     if (!estimate || !appliedPromo) return 0
-
     const amount = estimate.totalAmount
     let discount = 0
-
     if (appliedPromo.type === 'PERCENTAGE') {
       discount = (amount * appliedPromo.discount) / 100
       if (appliedPromo.maxDiscount && discount > appliedPromo.maxDiscount) {
@@ -256,7 +261,6 @@ export function AdvancedRideBooking() {
     } else {
       discount = appliedPromo.discount
     }
-
     return discount
   }
 
@@ -265,48 +269,45 @@ export function AdvancedRideBooking() {
     return Math.max(0, estimate.totalAmount - calculatePromoDiscount())
   }
 
-  // Handle WhatsApp Booking submission
+  // Enhanced WhatsApp Booking submission
   const handleWhatsAppBooking = () => {
     if (!estimate) return
-
     setIsLoading(true)
 
-    // Build the message details
-    const stopsText = stops.length > 0 ? `\n*Stops:* ${stops.map(s => s.location).join(' -> ')}` : ''
+    const stopsText = stops.length > 0 ? `\n*📍 Stops:* \n  - ${stops.map(s => s.location).join('\n  - ')}` : ''
     const scheduleText = scheduleRide 
-      ? `\n*Scheduled For:* ${scheduleDate ? format(scheduleDate, "PPP") : ''} at ${scheduleTime}` 
-      : '\n*Time:* Immediate (Ride Now)'
+      ? `\n*⏰ Scheduled For:* ${scheduleDate ? format(scheduleDate, "PPP") : ''} at ${scheduleTime}` 
+      : '\n*⏰ Time:* Immediate (Ride Now)'
     
-    // Gather Preferences
     const activePrefs = [
-      acRequired ? 'AC Required' : '',
-      needChildSeat ? 'Child Seat Needed' : '',
+      acRequired ? 'AC' : '',
+      needChildSeat ? 'Child Seat' : '',
       wheelchairAccessible ? 'Wheelchair Accessible' : '',
       petFriendly ? 'Pet Friendly' : '',
-      femaleDriver ? 'Female Driver Requested' : '',
+      femaleDriver ? 'Female Driver' : '',
       musicPreference !== 'none' ? `Music: ${musicPreference}` : ''
     ].filter(Boolean).join(', ')
     
-    const preferencesText = activePrefs ? `\n*Preferences:* ${activePrefs}` : ''
-    const notesText = tripNotes ? `\n*Trip Notes:* ${tripNotes}` : ''
-    const promoText = appliedPromo ? `\n*Promo Applied:* ${appliedPromo.code} (Saved ₹${calculatePromoDiscount()})` : ''
-
+    const preferencesText = activePrefs ? `\n*⚙️ Preferences:* ${activePrefs}` : ''
+    const notesText = tripNotes ? `\n*📝 Notes:* ${tripNotes}` : ''
+    const promoText = appliedPromo ? `\n*🎟️ Promo Applied:* ${appliedPromo.code} (Saved ₹${calculatePromoDiscount()})` : ''
     const vehicleName = vehicleTypes.find(v => v.id === vehicleType)?.name || vehicleType
 
-    const message = `*🚕 New Advanced Ride Booking (G7 Travels)*
+    const message = `*🚕 NEW RIDE REQUEST | G7 TRAVELS*
     
-*Pickup:* ${pickupLocation}
-*Drop:* ${dropLocation}${stopsText}${scheduleText}
-*Vehicle:* ${vehicleName}
-*Payment Method:* ${paymentMethod}
-*Total Fare:* ₹${getFinalAmount()}${promoText}${preferencesText}${notesText}
+*🟢 Pickup:* ${pickupLocation}${stopsText}
+*🔴 Drop:* ${dropLocation}
+${scheduleText}
+*🚘 Vehicle:* ${vehicleName}
 
-Please confirm my booking. Thank you!`
+*💰 FARE SUMMARY*
+- Payment: ${paymentMethod}
+- Total Fare: *₹${getFinalAmount()}*${promoText}
+${preferencesText}${notesText}
 
-    // 91 is the country code for India, followed by your provided number
+Please confirm my booking. Thank you! ✅`
+
     const whatsappUrl = `https://wa.me/919014878313?text=${encodeURIComponent(message)}`
-    
-    // Open WhatsApp in a new tab
     window.open(whatsappUrl, '_blank')
     setIsLoading(false)
   }
@@ -314,83 +315,152 @@ Please confirm my booking. Thank you!`
   return (
     <div className="w-full max-w-5xl mx-auto space-y-6">
       {/* Main Booking Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Car className="h-5 w-5" />
-            Advanced Ride Booking
-          </CardTitle>
-          <CardDescription>
-            Book a ride with advanced options including scheduling, multiple stops, and custom preferences
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Pickup & Drop Locations with Favorites */}
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="pickup" className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-green-600" />
-                  Pickup Location
-                </Label>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowFavorites(!showFavorites)}
-                >
-                  <Heart className="h-3 w-3 mr-1" />
-                  Favorites
-                </Button>
-              </div>
-              <LocationAutocomplete
-                id="pickup"
-                value={pickupLocation}
-                onChange={(value, coords) => {
-                  setPickupLocation(value)
-                  setPickupCoords(coords)
-                  setEstimate(null)
-                }}
-                placeholder="Enter pickup location"
-              />
+      <Card className="border-0 shadow-lg">
+        <CardHeader className="border-b bg-slate-50/50 pb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-2xl">
+                <Car className="h-6 w-6 text-orange-600" />
+                Advanced Booking
+              </CardTitle>
+              <CardDescription className="mt-1">
+                Customize your journey with multiple stops, scheduling, and specific preferences.
+              </CardDescription>
             </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowFavorites(!showFavorites)}
+              className="hidden md:flex"
+            >
+              <Heart className="h-4 w-4 mr-2 text-orange-500" />
+              Saved Locations
+            </Button>
+          </div>
+        </CardHeader>
+        
+        <CardContent className="space-y-8 pt-6">
+          
+          {/* Route Timeline UI */}
+          <div className="relative pl-4 md:pl-8">
+            {/* The visual dashed line connecting the dots */}
+            <div className="absolute left-[23px] md:left-[39px] top-8 bottom-8 w-0.5 border-l-2 border-dashed border-slate-300 z-0" />
 
-            <div className="space-y-2">
-              <Label htmlFor="drop" className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-red-600" />
-                Drop Location
-              </Label>
-              <LocationAutocomplete
-                id="drop"
-                value={dropLocation}
-                onChange={(value, coords) => {
-                  setDropLocation(value)
-                  setDropCoords(coords)
-                  setEstimate(null)
-                }}
-                placeholder="Enter drop location"
-              />
+            <div className="grid md:grid-cols-2 gap-4 relative z-10">
+              
+              {/* Pickup Location */}
+              <div className="space-y-2 relative bg-white">
+                <div className="absolute -left-6 md:-left-10 top-9 w-4 h-4 rounded-full bg-green-100 border-4 border-green-500 flex items-center justify-center shadow-sm" />
+                <Label htmlFor="pickup" className="font-semibold text-slate-700">Pickup Location</Label>
+                <LocationAutocomplete
+                  id="pickup"
+                  value={pickupLocation}
+                  onChange={(value, coords) => {
+                    setPickupLocation(value)
+                    setPickupCoords(coords)
+                    setEstimate(null)
+                  }}
+                  placeholder="Where are you starting?"
+                />
+              </div>
+
+              {/* Empty space for grid alignment on desktop */}
+              <div className="hidden md:block" />
+
+              {/* Dynamic Stops */}
+              <AnimatePresence>
+                {showStops && stops.map((stop, index) => (
+                  <motion.div
+                    key={stop.id}
+                    initial={{ opacity: 0, height: 0, x: -20 }}
+                    animate={{ opacity: 1, height: 'auto', x: 0 }}
+                    exit={{ opacity: 0, height: 0, x: -20 }}
+                    className="space-y-2 relative bg-white col-span-1 md:col-span-2"
+                  >
+                    <div className="absolute -left-6 md:-left-10 top-9 w-4 h-4 rounded-full bg-orange-100 border-4 border-orange-500 flex items-center justify-center shadow-sm" />
+                    <div className="flex gap-2 w-full md:w-1/2">
+                      <div className="flex-1 space-y-2">
+                        <Label className="font-semibold text-slate-700">Stop {index + 1}</Label>
+                        <LocationAutocomplete
+                          id={`stop-${stop.id}`}
+                          value={stop.location}
+                          onChange={(value, coords) => handleStopChange(stop.id, value, coords)}
+                          placeholder="Add a stop along the way"
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleRemoveStop(stop.id)}
+                        className="mt-7 text-slate-400 hover:text-red-500 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </Button>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+
+              {/* Drop Location */}
+              <div className="space-y-2 relative bg-white mt-2">
+                <div className="absolute -left-6 md:-left-10 top-9 w-4 h-4 rounded-full bg-red-100 border-4 border-red-500 flex items-center justify-center shadow-sm" />
+                <Label htmlFor="drop" className="font-semibold text-slate-700">Drop Location</Label>
+                <LocationAutocomplete
+                  id="drop"
+                  value={dropLocation}
+                  onChange={(value, coords) => {
+                    setDropLocation(value)
+                    setDropCoords(coords)
+                    setEstimate(null)
+                  }}
+                  placeholder="Where are you heading?"
+                />
+              </div>
+
+              <div className="flex items-end">
+                {!showStops || stops.length < 3 ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => {
+                      if (!showStops) setShowStops(true)
+                      else handleAddStop()
+                    }}
+                    className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    {showStops ? 'Add Another Stop' : 'Add a Stop'}
+                  </Button>
+                ) : null}
+              </div>
             </div>
           </div>
 
-          {/* Favorite Locations Dropdown */}
+          {/* Favorite Locations Dropdown (Mobile visible too) */}
           <AnimatePresence>
             {showFavorites && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="p-4 bg-muted rounded-lg space-y-3"
+                className="p-4 bg-orange-50/50 border border-orange-100 rounded-xl space-y-3"
               >
-                <h4 className="font-semibold text-sm">Saved Locations</h4>
-                <div className="grid md:grid-cols-2 gap-2">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-semibold text-slate-800">Saved Locations</h4>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => setShowFavorites(false)}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="grid md:grid-cols-2 gap-3">
                   {favoriteLocations.map((fav) => (
                     <div
                       key={fav.id}
-                      className="flex items-center justify-between p-3 bg-background rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                      className="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-100 hover:border-orange-300 hover:shadow-md cursor-pointer transition-all"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="p-2 bg-primary/10 rounded-lg">
+                        <div className="p-2 bg-orange-100 text-orange-600 rounded-lg">
                           {fav.type === 'HOME' ? <Home className="h-4 w-4" /> :
                            fav.type === 'WORK' ? <Briefcase className="h-4 w-4" /> :
                            <MapPin className="h-4 w-4" />}
@@ -401,125 +471,57 @@ Please confirm my booking. Thank you!`
                         </div>
                       </div>
                       <div className="flex gap-1">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleSelectFavorite(fav, true)}
-                        >
-                          <Navigation className="h-3 w-3" />
+                        <Button type="button" variant="secondary" size="sm" onClick={() => handleSelectFavorite(fav, true)} title="Set as Pickup">
+                          <CircleDot className="h-3 w-3 text-green-600" />
                         </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleSelectFavorite(fav, false)}
-                        >
-                          <MapPin className="h-3 w-3" />
+                        <Button type="button" variant="secondary" size="sm" onClick={() => handleSelectFavorite(fav, false)} title="Set as Drop">
+                          <MapPin className="h-3 w-3 text-red-600" />
                         </Button>
                       </div>
                     </div>
                   ))}
                 </div>
-                <Button variant="outline" size="sm" className="w-full">
-                  <Plus className="h-3 w-3 mr-2" />
-                  Add New Location
-                </Button>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Multiple Stops */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label>Additional Stops</Label>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setShowStops(!showStops)}
-              >
-                {showStops ? <ChevronRight className="h-3 w-3 mr-2" /> : <Plus className="h-3 w-3 mr-2" />}
-                {showStops ? 'Hide Stops' : 'Add Stop'}
-              </Button>
-            </div>
-            <AnimatePresence>
-              {showStops && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="space-y-3"
-                >
-                  {stops.map((stop, index) => (
-                    <div key={stop.id} className="flex gap-2">
-                      <div className="flex-1 space-y-2">
-                        <Label>Stop {index + 1}</Label>
-                        <LocationAutocomplete
-                          id={`stop-${stop.id}`}
-                          value={stop.location}
-                          onChange={(value, coords) => handleStopChange(stop.id, value, coords)}
-                          placeholder="Enter stop location"
-                        />
-                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleRemoveStop(stop.id)}
-                        className="mt-6"
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  ))}
-                  {stops.length < 3 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={handleAddStop}
-                      className="w-full"
-                    >
-                      <Plus className="h-3 w-3 mr-2" />
-                      Add Another Stop
-                    </Button>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          <hr className="border-slate-100" />
 
           {/* Schedule Ride */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="schedule">Schedule for Later</Label>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+              <div>
+                <Label htmlFor="schedule" className="text-base font-semibold cursor-pointer">Schedule for Later</Label>
+                <p className="text-sm text-slate-500">Book your ride in advance for peace of mind.</p>
+              </div>
               <Switch
                 id="schedule"
                 checked={scheduleRide}
                 onCheckedChange={setScheduleRide}
+                className="data-[state=checked]:bg-orange-500"
               />
             </div>
+            
             <AnimatePresence>
               {scheduleRide && (
                 <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="grid md:grid-cols-2 gap-4"
+                  initial={{ opacity: 0, height: 0, y: -10 }}
+                  animate={{ opacity: 1, height: 'auto', y: 0 }}
+                  exit={{ opacity: 0, height: 0, y: -10 }}
+                  className="grid md:grid-cols-2 gap-4 px-2"
                 >
                   <div className="space-y-2">
-                    <Label>Date</Label>
+                    <Label className="text-slate-700 font-medium">Select Date</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
                           className={cn(
-                            "w-full justify-start text-left font-normal",
+                            "w-full justify-start text-left font-normal border-slate-200",
                             !scheduleDate && "text-muted-foreground"
                           )}
                         >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          <CalendarIcon className="mr-2 h-4 w-4 text-orange-500" />
                           {scheduleDate ? format(scheduleDate, "PPP") : "Pick a date"}
                         </Button>
                       </PopoverTrigger>
@@ -535,11 +537,12 @@ Please confirm my booking. Thank you!`
                     </Popover>
                   </div>
                   <div className="space-y-2">
-                    <Label>Time</Label>
+                    <Label className="text-slate-700 font-medium">Select Time</Label>
                     <Input
                       type="time"
                       value={scheduleTime}
                       onChange={(e) => setScheduleTime(e.target.value)}
+                      className="border-slate-200"
                     />
                   </div>
                 </motion.div>
@@ -547,48 +550,60 @@ Please confirm my booking. Thank you!`
             </AnimatePresence>
           </div>
 
-          {/* Vehicle Type Selection with Features */}
-          <div className="space-y-3">
-            <Label>Select Vehicle Type</Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {/* Vehicle Type Selection */}
+          <div className="space-y-4 pt-4">
+            <Label className="text-lg font-semibold">Select Vehicle Type</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {vehicleTypes.map((vehicle) => (
                 <motion.div
                   key={vehicle.id}
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ y: -4 }}
                   whileTap={{ scale: 0.98 }}
+                  className="relative"
                 >
+                  {vehicle.popular && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md z-10">
+                      MOST POPULAR
+                    </div>
+                  )}
                   <button
                     type="button"
                     onClick={() => {
                       setVehicleType(vehicle.id)
                       setEstimate(null)
                     }}
-                    className={`w-full p-4 rounded-lg border-2 text-left transition-all overflow-hidden ${
+                    className={`w-full p-5 rounded-xl border-2 text-left transition-all overflow-hidden h-full ${
                       vehicleType === vehicle.id
-                        ? 'border-primary bg-primary/5'
-                        : 'border-border hover:border-primary/50'
+                        ? 'border-orange-500 bg-orange-50/30 shadow-[0_0_20px_rgba(249,115,22,0.15)]'
+                        : 'border-slate-200 hover:border-orange-300 hover:shadow-md bg-white'
                     }`}
                   >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="w-28 h-16 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="w-24 h-14 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0 shadow-inner">
                         <img
                           src={vehicle.image}
                           alt={vehicle.name}
-                          className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                          className="w-full h-full object-cover"
                         />
                       </div>
-                      {vehicleType === vehicle.id && (
-                        <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
-                      )}
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                        vehicleType === vehicle.id ? 'border-orange-500 bg-orange-500' : 'border-slate-300'
+                      }`}>
+                        {vehicleType === vehicle.id && <CheckCircle2 className="h-4 w-4 text-white" />}
+                      </div>
                     </div>
-                    <h3 className="font-semibold">{vehicle.name}</h3>
-                    <p className="text-sm text-muted-foreground">{vehicle.capacity}</p>
-                    <p className="text-xs text-muted-foreground mb-2">{vehicle.luggage}</p>
-                    <div className="flex flex-wrap gap-1">
+                    <h3 className="font-bold text-slate-800 text-lg">{vehicle.name}</h3>
+                    <div className="flex items-center gap-3 text-sm text-slate-500 mt-1 mb-3">
+                      <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {vehicle.capacity}</span>
+                      <span className="flex items-center gap-1"><Briefcase className="w-3 h-3" /> {vehicle.luggage}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
                       {vehicle.features.map((feature, i) => (
                         <span
                           key={i}
-                          className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full"
+                          className={`text-[10px] px-2 py-1 rounded-md font-medium ${
+                            vehicleType === vehicle.id ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-600'
+                          }`}
                         >
                           {feature}
                         </span>
@@ -600,97 +615,101 @@ Please confirm my booking. Thank you!`
             </div>
           </div>
 
+          <hr className="border-slate-100" />
+
           {/* Ride Preferences */}
-          <div className="space-y-3">
-            <Label className="flex items-center gap-2">
-              <Star className="h-4 w-4" />
+          <div className="space-y-4">
+            <Label className="flex items-center gap-2 text-lg font-semibold">
+              <Settings className="h-5 w-5 text-orange-500" />
               Ride Preferences
             </Label>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-muted rounded-lg">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 p-5 bg-slate-50 border border-slate-100 rounded-xl">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Snowflake className="h-4 w-4" />
+                <div className="flex items-center gap-2 text-slate-700 font-medium">
+                  <Snowflake className="h-4 w-4 text-blue-500" />
                   <span className="text-sm">AC Required</span>
                 </div>
                 <Switch checked={acRequired} onCheckedChange={setAcRequired} />
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Volume2 className="h-4 w-4" />
+                <div className="flex items-center gap-2 text-slate-700 font-medium">
+                  <Volume2 className="h-4 w-4 text-green-500" />
                   <span className="text-sm">Child Seat</span>
                 </div>
                 <Switch checked={needChildSeat} onCheckedChange={setNeedChildSeat} />
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Navigation className="h-4 w-4" />
-                  <span className="text-sm">Wheelchair Accessible</span>
+                <div className="flex items-center gap-2 text-slate-700 font-medium">
+                  <Navigation className="h-4 w-4 text-purple-500" />
+                  <span className="text-sm">Wheelchair Access</span>
                 </div>
                 <Switch checked={wheelchairAccessible} onCheckedChange={setWheelchairAccessible} />
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Share2 className="h-4 w-4" />
+                <div className="flex items-center gap-2 text-slate-700 font-medium">
+                  <Share2 className="h-4 w-4 text-amber-500" />
                   <span className="text-sm">Pet Friendly</span>
                 </div>
                 <Switch checked={petFriendly} onCheckedChange={setPetFriendly} />
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
+                <div className="flex items-center gap-2 text-slate-700 font-medium">
+                  <User className="h-4 w-4 text-pink-500" />
                   <span className="text-sm">Female Driver</span>
                 </div>
                 <Switch checked={femaleDriver} onCheckedChange={setFemaleDriver} />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label>Music Preference</Label>
-              <Select value={musicPreference} onValueChange={setMusicPreference}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {musicOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="grid md:grid-cols-2 gap-4 pt-2">
+              <div className="space-y-2">
+                <Label className="text-slate-700 font-medium">Music Preference</Label>
+                <Select value={musicPreference} onValueChange={setMusicPreference}>
+                  <SelectTrigger className="border-slate-200">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {musicOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {/* Trip Notes */}
+              <div className="space-y-2">
+                <Label className="text-slate-700 font-medium">Trip Notes (Optional)</Label>
+                <Input
+                  placeholder="E.g., Landmark, gate number, special requirements"
+                  value={tripNotes}
+                  onChange={(e) => setTripNotes(e.target.value)}
+                  className="border-slate-200"
+                />
+              </div>
             </div>
           </div>
 
-          {/* Trip Notes */}
-          <div className="space-y-2">
-            <Label>Trip Notes (Optional)</Label>
-            <Textarea
-              placeholder="Any special instructions for the driver (e.g., landmark, gate number, special requirements)"
-              value={tripNotes}
-              onChange={(e) => setTripNotes(e.target.value)}
-              rows={3}
-            />
-          </div>
-
           {/* Get Estimate Button */}
-          <Button
-            onClick={handleGetEstimate}
-            disabled={isLoading}
-            className="w-full"
-            size="lg"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Calculating...
-              </>
-            ) : (
-              <>
-                <Route className="mr-2 h-4 w-4" />
-                Get Fare Estimate
-              </>
-            )}
-          </Button>
+          <div className="pt-4">
+            <Button
+              onClick={handleGetEstimate}
+              disabled={isLoading}
+              className="w-full h-14 text-lg font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-xl shadow-slate-900/20"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Calculating Best Route...
+                </>
+              ) : (
+                <>
+                  <Route className="mr-2 h-5 w-5 text-orange-500" />
+                  Get Fare Estimate
+                </>
+              )}
+            </Button>
+          </div>
 
           {/* Error Message */}
           <AnimatePresence>
@@ -699,211 +718,185 @@ Please confirm my booking. Thank you!`
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm"
+                className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 font-medium text-sm flex items-center"
               >
+                <div className="w-2 h-2 rounded-full bg-red-500 mr-2 animate-pulse" />
                 {error}
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Fare Estimate Result with Advanced Options */}
-          <AnimatePresence>
-            {estimate && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="space-y-4"
-              >
-                <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span>Fare Estimate</span>
-                      <IndianRupee className="h-5 w-5" />
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {/* Distance and Duration */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="flex items-center gap-2">
-                        <Route className="h-4 w-4 text-primary" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">Distance</p>
-                          <p className="font-semibold">{estimate.distance} km</p>
+          {/* Fare Estimate Result */}
+          <div ref={estimateRef} className="scroll-m-24">
+            <AnimatePresence>
+              {estimate && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="space-y-4 pt-4"
+                >
+                  <Card className="border-2 border-orange-200 bg-white shadow-xl overflow-hidden">
+                    <div className="h-1.5 w-full bg-gradient-to-r from-orange-500 to-red-600" />
+                    <CardHeader className="pb-4 border-b border-slate-100 bg-slate-50/50">
+                      <CardTitle className="flex items-center justify-between text-xl">
+                        <span>Fare Summary</span>
+                        <div className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm flex items-center font-bold">
+                          <IndianRupee className="h-4 w-4 mr-1" />
+                          {getFinalAmount()}
+                        </div>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6 pt-6">
+                      
+                      {/* Distance and Duration Cards */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                          <div className="bg-blue-100 p-2 rounded-lg text-blue-600">
+                            <Route className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Distance</p>
+                            <p className="font-bold text-slate-800">{estimate.distance} km</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                          <div className="bg-emerald-100 p-2 rounded-lg text-emerald-600">
+                            <Clock className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Est. Time</p>
+                            <p className="font-bold text-slate-800">{estimate.duration} mins</p>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-primary" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">Estimated Time</p>
-                          <p className="font-semibold">{estimate.duration} mins</p>
-                        </div>
-                      </div>
-                    </div>
 
-                    {/* Fare Breakdown */}
-                    <div className="space-y-2 pt-4 border-t">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Base Fare</span>
-                        <span>₹{estimate.breakdown.baseFare}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Distance Charge ({estimate.distance} km × ₹20)</span>
-                        <span>₹{estimate.breakdown.distanceCharge}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Time Charge ({estimate.duration} mins)</span>
-                        <span>₹{estimate.breakdown.timeCharge}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">GST (18%)</span>
-                        <span>₹{estimate.breakdown.gst}</span>
-                      </div>
-                      <div className="flex justify-between text-sm text-green-600 font-medium bg-green-50/50 p-1 rounded">
-                        <span>Special Discount (Time + GST Waiver)</span>
-                        <span>-₹{estimate.breakdown.discount}</span>
-                      </div>
-                      {estimate.surgeMultiplier > 1 && (
-                        <div className="flex justify-between text-sm text-orange-600 mt-1">
-                          <span>Surge Multiplier ({estimate.surgeMultiplier}x)</span>
-                          <span>+₹{estimate.breakdown.surgeCharge}</span>
+                      {/* Detailed Fare Breakdown */}
+                      <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 space-y-3">
+                        <div className="flex justify-between text-sm text-slate-600 font-medium">
+                          <span>Base Fare</span>
+                          <span className="text-slate-900">₹{estimate.breakdown.baseFare}</span>
                         </div>
-                      )}
-                    </div>
-
-                    {/* Promo Code Section */}
-                    <div className="space-y-2 pt-4 border-t">
-                      <Label>Apply Additional Promo Code</Label>
-                      <div className="flex gap-2">
-                        <Input
-                          placeholder="Enter promo code"
-                          value={promoCode}
-                          onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                          disabled={!!appliedPromo}
-                        />
-                        {!appliedPromo ? (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={handleApplyPromo}
-                            disabled={!promoCode.trim()}
-                          >
-                            Apply
-                          </Button>
-                        ) : (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => {
-                              setAppliedPromo(null)
-                              setPromoCode('')
-                            }}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
+                        <div className="flex justify-between text-sm text-slate-600 font-medium">
+                          <span>Distance Charge ({estimate.distance} km)</span>
+                          <span className="text-slate-900">₹{estimate.breakdown.distanceCharge}</span>
+                        </div>
+                        <div className="flex justify-between text-sm text-slate-600 font-medium">
+                          <span>Time Charge ({estimate.duration} mins)</span>
+                          <span className="text-slate-900">₹{estimate.breakdown.timeCharge}</span>
+                        </div>
+                        <div className="flex justify-between text-sm text-slate-600 font-medium">
+                          <span>GST (18%)</span>
+                          <span className="text-slate-900">₹{estimate.breakdown.gst}</span>
+                        </div>
+                        
+                        <div className="my-2 border-t border-dashed border-slate-300" />
+                        
+                        <div className="flex justify-between text-sm text-green-700 font-semibold">
+                          <span>Auto Discount (Time & GST Waived)</span>
+                          <span>-₹{estimate.breakdown.discount}</span>
+                        </div>
+                        {estimate.surgeMultiplier > 1 && (
+                          <div className="flex justify-between text-sm text-red-600 font-semibold mt-1">
+                            <span>High Demand Surge ({estimate.surgeMultiplier}x)</span>
+                            <span>+₹{estimate.breakdown.surgeCharge}</span>
+                          </div>
                         )}
-                      </div>
-                      {promoError && (
-                        <p className="text-sm text-destructive">{promoError}</p>
-                      )}
-                      {appliedPromo && (
-                        <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                          <p className="text-sm text-green-700 dark:text-green-300">
-                            Promo code applied! You saved an extra ₹{calculatePromoDiscount()}
-                          </p>
+                        {appliedPromo && (
+                          <div className="flex justify-between text-sm text-green-700 font-semibold mt-1">
+                            <span>Promo Discount ({appliedPromo.code})</span>
+                            <span>-₹{calculatePromoDiscount()}</span>
+                          </div>
+                        )}
+                        
+                        <div className="my-2 border-t border-slate-300" />
+                        
+                        <div className="flex justify-between items-center pt-1">
+                          <span className="text-base font-bold text-slate-800">Final Amount</span>
+                          <span className="text-2xl font-black text-orange-600">₹{getFinalAmount()}</span>
                         </div>
-                      )}
-                    </div>
-
-                    {/* Payment Method */}
-                    <div className="space-y-3 pt-4 border-t">
-                      <Label>Payment Method</Label>
-                      <div className="grid grid-cols-2 gap-2">
-                        {paymentMethods.map((method) => (
-                          <button
-                            key={method.id}
-                            type="button"
-                            onClick={() => setPaymentMethod(method.id)}
-                            className={`p-3 rounded-lg border-2 flex items-center gap-2 transition-all ${
-                              paymentMethod === method.id
-                                ? 'border-primary bg-primary/5'
-                                : 'border-border hover:border-primary/50'
-                            }`}
-                          >
-                            {method.icon}
-                            <span className="text-sm font-medium">{method.name}</span>
-                            {paymentMethod === method.id && (
-                              <CheckCircle2 className="h-4 w-4 text-primary ml-auto" />
-                            )}
-                          </button>
-                        ))}
                       </div>
-                    </div>
 
-                    {/* Total Amount */}
-                    <div className="pt-4 border-t space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold">Subtotal</span>
-                        <span className="text-xl">₹{estimate.totalAmount}</span>
-                      </div>
-                      {appliedPromo && (
-                        <div className="flex justify-between items-center text-green-600">
-                          <span className="font-medium">Promo Discount ({appliedPromo.type === 'PERCENTAGE' ? appliedPromo.discount + '%' : '₹' + appliedPromo.discount})</span>
-                          <span>-₹{calculatePromoDiscount()}</span>
+                      {/* Promo Code Section */}
+                      <div className="space-y-3">
+                        <Label className="text-slate-700">Have a Promo Code?</Label>
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Enter code (e.g. WELCOME10)"
+                            value={promoCode}
+                            onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                            disabled={!!appliedPromo}
+                            className="border-slate-200 uppercase"
+                          />
+                          {!appliedPromo ? (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={handleApplyPromo}
+                              disabled={!promoCode.trim()}
+                              className="border-orange-200 text-orange-700 hover:bg-orange-50"
+                            >
+                              Apply
+                            </Button>
+                          ) : (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => {
+                                setAppliedPromo(null)
+                                setPromoCode('')
+                              }}
+                              className="border-red-200 text-red-600 hover:bg-red-50"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          )}
                         </div>
-                      )}
-                      <div className="flex justify-between items-center pt-2 border-t-2 border-primary">
-                        <span className="text-xl font-bold">Total Amount</span>
-                        <span className="text-3xl font-bold text-primary">
-                          ₹{getFinalAmount()}
-                        </span>
+                        {promoError && <p className="text-sm text-red-500 font-medium">{promoError}</p>}
                       </div>
-                    </div>
 
-                    {/* Book Button - NOW TRIGGERS WHATSAPP */}
-                    <Button
-                      className="w-full bg-green-600 hover:bg-green-700 text-white"
-                      size="lg"
-                      disabled={isLoading}
-                      onClick={handleWhatsAppBooking}
-                    >
-                      <Phone className="mr-2 h-4 w-4" />
-                      {scheduleRide ? 'Schedule via WhatsApp' : 'Book via WhatsApp'} - ₹{getFinalAmount()}
-                    </Button>
-
-                    {/* Safety Notice */}
-                    <div className="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                      <Shield className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                      <div className="text-sm">
-                        <p className="font-medium text-blue-700 dark:text-blue-300">Safe & Secure Ride</p>
-                        <p className="text-blue-600/70 dark:text-blue-300/70 mt-1">
-                          Your ride is tracked in real-time. Share trip details with loved ones for added safety.
-                        </p>
+                      {/* Payment Method */}
+                      <div className="space-y-3 pt-2">
+                        <Label className="text-slate-700 font-semibold text-base">How would you like to pay?</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          {paymentMethods.map((method) => (
+                            <button
+                              key={method.id}
+                              type="button"
+                              onClick={() => setPaymentMethod(method.id)}
+                              className={`p-3 rounded-xl border-2 flex flex-col items-center justify-center gap-2 transition-all ${
+                                paymentMethod === method.id
+                                  ? 'border-orange-500 bg-orange-50 text-orange-700 shadow-sm'
+                                  : 'border-slate-200 hover:border-orange-300 text-slate-600 hover:bg-slate-50'
+                              }`}
+                            >
+                              <div className={paymentMethod === method.id ? 'text-orange-600' : 'text-slate-400'}>
+                                {method.icon}
+                              </div>
+                              <span className="text-xs font-bold text-center">{method.name}</span>
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </CardContent>
-      </Card>
 
-      {/* Emergency SOS Button */}
-      <Card className="border-red-200 bg-red-50 dark:bg-red-900/10">
-        <CardContent className="p-4">
-          <Button
-            variant="destructive"
-            className="w-full"
-            size="lg"
-            onClick={() => window.location.href = 'tel:9866143321'}
-          >
-            <Phone className="mr-2 h-4 w-4" />
-            Emergency SOS - Call 24/7 Support
-          </Button>
-          <p className="text-xs text-center text-muted-foreground mt-2">
-            Tap to immediately connect with our emergency support team
-          </p>
+                      {/* Book Button */}
+                      <div className="pt-4">
+                        <Button
+                          className="w-full h-16 text-xl rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg shadow-green-500/30"
+                          disabled={isLoading}
+                          onClick={handleWhatsAppBooking}
+                        >
+                          <Phone className="mr-3 h-6 w-6" />
+                          {scheduleRide ? 'Confirm Schedule via WhatsApp' : 'Confirm Ride via WhatsApp'}
+                        </Button>
+                      </div>
+
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </CardContent>
       </Card>
     </div>
