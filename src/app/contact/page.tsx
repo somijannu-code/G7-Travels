@@ -204,13 +204,6 @@ export default function ContactPage() {
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-slate-900 text-white py-8 mt-auto">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-slate-400">© 2024 G7 Travels. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   )
 }
