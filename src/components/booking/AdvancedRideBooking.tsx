@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input'
 import { LocationAutocomplete } from '@/components/maps/LocationAutocomplete'
 import { cn } from '@/lib/utils'
 import { format, addDays } from 'date-fns'
-import { MapPin, Car, Clock, Route, IndianRupee, CheckCircle2, Users, Loader2, Settings, Calendar as CalendarIcon, Plus, X, Star, Volume2, Snowflake, Phone, Navigation, Share2, Heart, Trash2, ChevronRight, Home, Briefcase, User, Wallet, Shield, CircleDot } from 'lucide-react'
+import { MapPin, Car, Clock, Route, IndianRupee, CheckCircle2, Loader2, Calendar as CalendarIcon, Plus, X, Star, Volume2, Snowflake, Phone, Navigation, Share2, Heart, Trash2, ChevronRight, Home, Briefcase, User, Wallet, Shield, CircleDot, Users } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface FareEstimate {
@@ -63,25 +63,21 @@ interface FavoriteLocation {
 export function AdvancedRideBooking() {
   const estimateRef = useRef<HTMLDivElement>(null)
 
-  // Basic ride info
   const [pickupLocation, setPickupLocation] = useState('')
   const [pickupCoords, setPickupCoords] = useState({ lat: 0, lon: 0 })
   const [dropLocation, setDropLocation] = useState('')
   const [dropCoords, setDropCoords] = useState({ lat: 0, lon: 0 })
 
-  // Multiple stops
   const [stops, setStops] = useState<Stop[]>([])
   const [showStops, setShowStops] = useState(false)
 
-  // Scheduling
   const [scheduleRide, setScheduleRide] = useState(false)
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(new Date())
   const [scheduleTime, setScheduleTime] = useState('')
 
-  // Vehicle type
-  const [vehicleType, setVehicleType] = useState('SEDAN')
+  // Set default to Swift Dzire
+  const [vehicleType, setVehicleType] = useState('SWIFT_DZIRE')
 
-  // Ride preferences
   const [acRequired, setAcRequired] = useState(true)
   const [musicPreference, setMusicPreference] = useState('none')
   const [needChildSeat, setNeedChildSeat] = useState(false)
@@ -89,36 +85,32 @@ export function AdvancedRideBooking() {
   const [petFriendly, setPetFriendly] = useState(false)
   const [femaleDriver, setFemaleDriver] = useState(false)
 
-  // Trip notes
   const [tripNotes, setTripNotes] = useState('')
-
-  // Promo code
   const [promoCode, setPromoCode] = useState('')
   const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(null)
   const [promoError, setPromoError] = useState('')
-
-  // Payment method
   const [paymentMethod, setPaymentMethod] = useState('CASH')
 
-  // Favorite locations
   const [favoriteLocations] = useState<FavoriteLocation[]>([
     { id: '1', name: 'Home', address: '123 Main Street, Tirupati', coords: { lat: 13.6288, lon: 79.4192 }, type: 'HOME' },
     { id: '2', name: 'Work', address: '456 Business Park, Tirupati', coords: { lat: 13.6158, lon: 79.4292 }, type: 'WORK' }
   ])
   const [showFavorites, setShowFavorites] = useState(false)
 
-  // Loading and estimate
   const [isLoading, setIsLoading] = useState(false)
   const [estimate, setEstimate] = useState<FareEstimate | null>(null)
   const [error, setError] = useState('')
 
+  // NEW VEHICLE CONFIGURATION
   const vehicleTypes = [
-    { id: 'HATCHBACK', name: 'Hatchback', capacity: '4 Passengers', luggage: '2 Bags', image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&q=80', features: ['AC', 'Music'] },
-    { id: 'SEDAN', name: 'Sedan', capacity: '4 Passengers', luggage: '3 Bags', image: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=800&q=80', features: ['AC', 'Music', 'WiFi'], popular: true },
-    { id: 'SUV', name: 'SUV', capacity: '6 Passengers', luggage: '4 Bags', image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80', features: ['AC', 'Music', 'WiFi', 'More Space'] },
-    { id: 'PREMIUM_SEDAN', name: 'Premium Sedan', capacity: '4 Passengers', luggage: '3 Bags', image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80', features: ['AC', 'Music', 'WiFi', 'Leather Seats', 'Water Bottles'] },
-    { id: 'TEMPO_TRAVELLER', name: 'Tempo Traveller', capacity: '12 Passengers', luggage: '10 Bags', image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&q=80', features: ['AC', 'Music', 'Pushback Seats', 'Extra Luggage'] },
-    { id: 'MINIBUS', name: 'Minibus', capacity: '20 Passengers', luggage: '15 Bags', image: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&q=80', features: ['AC', 'Music', 'Pushback Seats', 'PA System'] }
+    { id: 'TOYOTA_ETIOS', name: 'Toyota Etios', capacity: '4 Passengers', luggage: '2 Bags', image: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=800&q=80', price: '14', features: ['AC', 'Music'] },
+    { id: 'SWIFT_DZIRE', name: 'Swift Dzire', capacity: '4 Passengers', luggage: '2 Bags', image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&q=80', price: '16', features: ['AC', 'Comfortable'], popular: true },
+    { id: 'MARUTI_SUZUKI_ERTIGA', name: 'Maruti Suzuki Ertiga', capacity: '6 Passengers', luggage: '3 Bags', image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80', price: '19', features: ['AC', 'Spacious MUV'] },
+    { id: 'TOYOTA_INNOVA', name: 'Toyota Innova', capacity: '6 Passengers', luggage: '4 Bags', image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80', price: '20', features: ['AC', 'Premium MUV'] },
+    { id: 'TOYOTA_INNOVA_CRYSTA', name: 'Toyota Innova Crysta', capacity: '6 Passengers', luggage: '4 Bags', image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&q=80', price: '22', features: ['AC', 'Luxury Comfort'] },
+    { id: 'TEMPO_TRAVELLER_12', name: 'Traveller Tempo (12)', capacity: '12 Passengers', luggage: '8 Bags', image: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&q=80', price: '28', features: ['AC', 'Pushback Seats'] },
+    { id: 'TEMPO_TRAVELLER_16', name: 'Traveller Tempo (16)', capacity: '16 Passengers', luggage: '10 Bags', image: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&q=80', price: '30', features: ['AC', 'Pushback Seats'] },
+    { id: 'BUSES', name: 'All Buses (22-50 Seats)', capacity: '22-50 Passengers', luggage: 'Large Storage', image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80', price: 'Custom', features: ['AC/Non-AC', 'Group Travel'] }
   ]
 
   const paymentMethods = [
@@ -138,11 +130,7 @@ export function AdvancedRideBooking() {
   ]
 
   const handleAddStop = () => {
-    const newStop: Stop = {
-      id: Date.now().toString(),
-      location: '',
-      coords: { lat: 0, lon: 0 }
-    }
+    const newStop: Stop = { id: Date.now().toString(), location: '', coords: { lat: 0, lon: 0 } }
     setStops([...stops, newStop])
   }
 
@@ -151,9 +139,7 @@ export function AdvancedRideBooking() {
   }
 
   const handleStopChange = (id: string, location: string, coords: { lat: number; lon: number }) => {
-    setStops(stops.map(stop =>
-      stop.id === id ? { ...stop, location, coords } : stop
-    ))
+    setStops(stops.map(stop => stop.id === id ? { ...stop, location, coords } : stop))
     setEstimate(null)
   }
 
@@ -162,16 +148,13 @@ export function AdvancedRideBooking() {
       setPromoError('Please enter a promo code')
       return
     }
-
     try {
       const response = await fetch('/api/promo/validate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: promoCode, amount: estimate?.totalAmount || 0 })
       })
-
       const data = await response.json()
-
       if (response.ok) {
         setAppliedPromo(data.promo)
         setPromoError('')
@@ -236,8 +219,6 @@ export function AdvancedRideBooking() {
       }
 
       setEstimate(data.estimate)
-      
-      // Auto-scroll to the estimate after a short delay to allow render
       setTimeout(() => {
         estimateRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }, 100)
@@ -269,7 +250,6 @@ export function AdvancedRideBooking() {
     return Math.max(0, estimate.totalAmount - calculatePromoDiscount())
   }
 
-  // Enhanced WhatsApp Booking submission
   const handleWhatsAppBooking = () => {
     if (!estimate) return
     setIsLoading(true)
@@ -293,6 +273,8 @@ export function AdvancedRideBooking() {
     const promoText = appliedPromo ? `\n*🎟️ Promo Applied:* ${appliedPromo.code} (Saved ₹${calculatePromoDiscount()})` : ''
     const vehicleName = vehicleTypes.find(v => v.id === vehicleType)?.name || vehicleType
 
+    const priceText = vehicleType === 'BUSES' ? '*Price on Request*' : `*₹${getFinalAmount()}*`
+
     const message = `*🚕 NEW RIDE REQUEST | G7 TRAVELS*
     
 *🟢 Pickup:* ${pickupLocation}${stopsText}
@@ -302,7 +284,7 @@ ${scheduleText}
 
 *💰 FARE SUMMARY*
 - Payment: ${paymentMethod}
-- Total Fare: *₹${getFinalAmount()}*${promoText}
+- Total Fare: ${priceText}${promoText}
 ${preferencesText}${notesText}
 
 Please confirm my booking. Thank you! ✅`
@@ -314,7 +296,6 @@ Please confirm my booking. Thank you! ✅`
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-6">
-      {/* Main Booking Card */}
       <Card className="border-0 shadow-lg">
         <CardHeader className="border-b bg-slate-50/50 pb-6">
           <div className="flex items-center justify-between">
@@ -341,14 +322,11 @@ Please confirm my booking. Thank you! ✅`
         </CardHeader>
         
         <CardContent className="space-y-8 pt-6">
-          
           {/* Route Timeline UI */}
           <div className="relative pl-4 md:pl-8">
-            {/* The visual dashed line connecting the dots */}
             <div className="absolute left-[23px] md:left-[39px] top-8 bottom-8 w-0.5 border-l-2 border-dashed border-slate-300 z-0" />
 
             <div className="grid md:grid-cols-2 gap-4 relative z-10">
-              
               {/* Pickup Location */}
               <div className="space-y-2 relative bg-white">
                 <div className="absolute -left-6 md:-left-10 top-9 w-4 h-4 rounded-full bg-green-100 border-4 border-green-500 flex items-center justify-center shadow-sm" />
@@ -365,7 +343,6 @@ Please confirm my booking. Thank you! ✅`
                 />
               </div>
 
-              {/* Empty space for grid alignment on desktop */}
               <div className="hidden md:block" />
 
               {/* Dynamic Stops */}
@@ -593,6 +570,13 @@ Please confirm my booking. Thank you! ✅`
                       </div>
                     </div>
                     <h3 className="font-bold text-slate-800 text-lg">{vehicle.name}</h3>
+                    
+                    <div className="text-xl font-bold text-orange-600 mt-2">
+                      {vehicle.price === 'Custom' ? 'Based on trip' : (
+                        <>₹{vehicle.price}<span className="text-sm text-slate-500 font-normal">/km</span></>
+                      )}
+                    </div>
+
                     <div className="flex items-center gap-3 text-sm text-slate-500 mt-1 mb-3">
                       <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {vehicle.capacity}</span>
                       <span className="flex items-center gap-1"><Briefcase className="w-3 h-3" /> {vehicle.luggage}</span>
@@ -741,10 +725,12 @@ Please confirm my booking. Thank you! ✅`
                     <CardHeader className="pb-4 border-b border-slate-100 bg-slate-50/50">
                       <CardTitle className="flex items-center justify-between text-xl">
                         <span>Fare Summary</span>
-                        <div className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm flex items-center font-bold">
-                          <IndianRupee className="h-4 w-4 mr-1" />
-                          {getFinalAmount()}
-                        </div>
+                        {vehicleType !== 'BUSES' && (
+                          <div className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm flex items-center font-bold">
+                            <IndianRupee className="h-4 w-4 mr-1" />
+                            {getFinalAmount()}
+                          </div>
+                        )}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6 pt-6">
@@ -771,89 +757,100 @@ Please confirm my booking. Thank you! ✅`
                         </div>
                       </div>
 
-                      {/* Detailed Fare Breakdown */}
-                      <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 space-y-3">
-                        <div className="flex justify-between text-sm text-slate-600 font-medium">
-                          <span>Base Fare</span>
-                          <span className="text-slate-900">₹{estimate.breakdown.baseFare}</span>
+                      {/* Detailed Fare Breakdown or Bus Prompt */}
+                      {vehicleType === 'BUSES' ? (
+                        <div className="bg-orange-50 rounded-xl p-8 border border-orange-200 text-center space-y-3">
+                          <h4 className="text-xl font-bold text-orange-800">Bus Pricing is Custom</h4>
+                          <p className="text-orange-700 font-medium max-w-md mx-auto">
+                            Because bus trips vary greatly based on duration and distance, please confirm via WhatsApp for an exact, tailored quote.
+                          </p>
                         </div>
-                        <div className="flex justify-between text-sm text-slate-600 font-medium">
-                          <span>Distance Charge ({estimate.distance} km)</span>
-                          <span className="text-slate-900">₹{estimate.breakdown.distanceCharge}</span>
-                        </div>
-                        <div className="flex justify-between text-sm text-slate-600 font-medium">
-                          <span>Time Charge ({estimate.duration} mins)</span>
-                          <span className="text-slate-900">₹{estimate.breakdown.timeCharge}</span>
-                        </div>
-                        <div className="flex justify-between text-sm text-slate-600 font-medium">
-                          <span>GST (18%)</span>
-                          <span className="text-slate-900">₹{estimate.breakdown.gst}</span>
-                        </div>
-                        
-                        <div className="my-2 border-t border-dashed border-slate-300" />
-                        
-                        <div className="flex justify-between text-sm text-green-700 font-semibold">
-                          <span>Auto Discount (Time & GST Waived)</span>
-                          <span>-₹{estimate.breakdown.discount}</span>
-                        </div>
-                        {estimate.surgeMultiplier > 1 && (
-                          <div className="flex justify-between text-sm text-red-600 font-semibold mt-1">
-                            <span>High Demand Surge ({estimate.surgeMultiplier}x)</span>
-                            <span>+₹{estimate.breakdown.surgeCharge}</span>
+                      ) : (
+                        <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 space-y-3">
+                          <div className="flex justify-between text-sm text-slate-600 font-medium">
+                            <span>Base Fare</span>
+                            <span className="text-slate-900">₹{estimate.breakdown.baseFare}</span>
                           </div>
-                        )}
-                        {appliedPromo && (
-                          <div className="flex justify-between text-sm text-green-700 font-semibold mt-1">
-                            <span>Promo Discount ({appliedPromo.code})</span>
-                            <span>-₹{calculatePromoDiscount()}</span>
+                          <div className="flex justify-between text-sm text-slate-600 font-medium">
+                            <span>Distance Charge ({estimate.distance} km)</span>
+                            <span className="text-slate-900">₹{estimate.breakdown.distanceCharge}</span>
                           </div>
-                        )}
-                        
-                        <div className="my-2 border-t border-slate-300" />
-                        
-                        <div className="flex justify-between items-center pt-1">
-                          <span className="text-base font-bold text-slate-800">Final Amount</span>
-                          <span className="text-2xl font-black text-orange-600">₹{getFinalAmount()}</span>
-                        </div>
-                      </div>
-
-                      {/* Promo Code Section */}
-                      <div className="space-y-3">
-                        <Label className="text-slate-700">Have a Promo Code?</Label>
-                        <div className="flex gap-2">
-                          <Input
-                            placeholder="Enter code (e.g. WELCOME10)"
-                            value={promoCode}
-                            onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                            disabled={!!appliedPromo}
-                            className="border-slate-200 uppercase"
-                          />
-                          {!appliedPromo ? (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              onClick={handleApplyPromo}
-                              disabled={!promoCode.trim()}
-                              className="border-orange-200 text-orange-700 hover:bg-orange-50"
-                            >
-                              Apply
-                            </Button>
-                          ) : (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              onClick={() => {
-                                setAppliedPromo(null)
-                                setPromoCode('')
-                              }}
-                              className="border-red-200 text-red-600 hover:bg-red-50"
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
+                          <div className="flex justify-between text-sm text-slate-600 font-medium">
+                            <span>Time Charge ({estimate.duration} mins)</span>
+                            <span className="text-slate-900">₹{estimate.breakdown.timeCharge}</span>
+                          </div>
+                          <div className="flex justify-between text-sm text-slate-600 font-medium">
+                            <span>GST (18%)</span>
+                            <span className="text-slate-900">₹{estimate.breakdown.gst}</span>
+                          </div>
+                          
+                          <div className="my-2 border-t border-dashed border-slate-300" />
+                          
+                          <div className="flex justify-between text-sm text-green-700 font-semibold">
+                            <span>Auto Discount (Time & GST Waived)</span>
+                            <span>-₹{estimate.breakdown.discount}</span>
+                          </div>
+                          {estimate.surgeMultiplier > 1 && (
+                            <div className="flex justify-between text-sm text-red-600 font-semibold mt-1">
+                              <span>High Demand Surge ({estimate.surgeMultiplier}x)</span>
+                              <span>+₹{estimate.breakdown.surgeCharge}</span>
+                            </div>
                           )}
+                          {appliedPromo && (
+                            <div className="flex justify-between text-sm text-green-700 font-semibold mt-1">
+                              <span>Promo Discount ({appliedPromo.code})</span>
+                              <span>-₹{calculatePromoDiscount()}</span>
+                            </div>
+                          )}
+                          
+                          <div className="my-2 border-t border-slate-300" />
+                          
+                          <div className="flex justify-between items-center pt-1">
+                            <span className="text-base font-bold text-slate-800">Final Amount</span>
+                            <span className="text-2xl font-black text-orange-600">₹{getFinalAmount()}</span>
+                          </div>
                         </div>
-                        {promoError && <p className="text-sm text-red-500 font-medium">{promoError}</p>}
-                      </div>
+                      )}
+
+                      {/* Promo Code Section (Hide for buses) */}
+                      {vehicleType !== 'BUSES' && (
+                        <div className="space-y-3">
+                          <Label className="text-slate-700">Have a Promo Code?</Label>
+                          <div className="flex gap-2">
+                            <Input
+                              placeholder="Enter code (e.g. WELCOME10)"
+                              value={promoCode}
+                              onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                              disabled={!!appliedPromo}
+                              className="border-slate-200 uppercase"
+                            />
+                            {!appliedPromo ? (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={handleApplyPromo}
+                                disabled={!promoCode.trim()}
+                                className="border-orange-200 text-orange-700 hover:bg-orange-50"
+                              >
+                                Apply
+                              </Button>
+                            ) : (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => {
+                                  setAppliedPromo(null)
+                                  setPromoCode('')
+                                }}
+                                className="border-red-200 text-red-600 hover:bg-red-50"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                          {promoError && <p className="text-sm text-red-500 font-medium">{promoError}</p>}
+                        </div>
+                      )}
 
                       {/* Payment Method */}
                       <div className="space-y-3 pt-2">
