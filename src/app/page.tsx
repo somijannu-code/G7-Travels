@@ -77,15 +77,15 @@ export default function G7TravelsPage() {
   return (
     <>
       {/* Premium Animated Divine Background */}
-      <div className="fixed inset-0 z-[-1] overflow-hidden bg-slate-50">
-        {/* Divine Aura Glow */}
+      <div className="fixed inset-0 z-[-1] overflow-hidden bg-slate-900">
+        {/* Divine Aura Glow - Made more vibrant */}
         <motion.div 
-          animate={{ opacity: [0.2, 0.5, 0.2], scale: [1, 1.1, 1] }}
+          animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.1, 1] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-orange-500/20 rounded-full blur-[120px]" 
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-orange-500/30 rounded-full blur-[100px]" 
         />
         
-        {/* Animated God Image */}
+        {/* Animated God Image - Increased opacity, removed multiply blend for clear visibility */}
         <motion.div
           animate={{
             scale: [1.05, 1.15, 1.05],
@@ -96,11 +96,11 @@ export default function G7TravelsPage() {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute inset-0 bg-[url('/tirupati-god.png')] bg-cover bg-top bg-no-repeat opacity-[0.25] mix-blend-multiply"
+          className="absolute inset-0 bg-[url('/tirupati-god.png')] bg-cover bg-top bg-no-repeat opacity-[0.55]"
         />
         
-        {/* Premium Frosted Overlay to ensure text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-white/80 to-slate-50/95 backdrop-blur-[3px]" />
+        {/* Premium Frosted Overlay - Clear at the top, frosted/white at the bottom for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/60 to-slate-50/95 backdrop-blur-[1px]" />
       </div>
 
       {/* Hero Section with Tabs */}
@@ -112,17 +112,17 @@ export default function G7TravelsPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <Badge className="mb-4 bg-orange-100/80 backdrop-blur-md text-orange-700 hover:bg-orange-200 border border-orange-200">
+              <Badge className="mb-4 bg-orange-100/80 backdrop-blur-md text-orange-700 hover:bg-orange-200 border border-orange-200 shadow-sm">
                 <MapPin className="w-3 h-3 mr-1" />
                 Serving Tirupati & Surrounding Areas
               </Badge>
               <h2 className="text-4xl md:text-5xl font-bold mb-4 drop-shadow-sm">
                 Your Trusted Travel Partner in{' '}
-                <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent drop-shadow-sm">
                   Tirupati
                 </span>
               </h2>
-              <p className="text-lg text-slate-700 font-medium max-w-2xl mx-auto drop-shadow-sm">
+              <p className="text-lg text-slate-800 font-medium max-w-2xl mx-auto drop-shadow-md">
                 Book rides with advanced features including scheduling, multiple stops, real-time tracking, and more!
               </p>
             </motion.div>
@@ -135,7 +135,7 @@ export default function G7TravelsPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="max-w-6xl mx-auto"
           >
-            <Card className="shadow-2xl border border-white/40 bg-white/70 backdrop-blur-xl">
+            <Card className="shadow-2xl border border-white/60 bg-white/70 backdrop-blur-xl">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="flex flex-wrap w-full h-auto p-1 bg-white/50 backdrop-blur-md justify-start sm:justify-center border-b border-white/40 rounded-t-xl">
                   <TabsTrigger value="book" className="flex-1 min-w-[120px] data-[state=active]:bg-white data-[state=active]:shadow-sm py-3">
