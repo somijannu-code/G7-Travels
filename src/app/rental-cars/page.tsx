@@ -10,114 +10,88 @@ import { useState } from 'react'
 export default function RentalCarsPage() {
   const [selectedType, setSelectedType] = useState('self-drive')
 
-  const VEHICLES: Vehicle[] = [
-  {
-    id: 'TOYOTA_ETIOS',
-    name: 'Toyota Etios',
-    capacity: 4,
-    luggage: 2,
-    image: 'https://media.zigcdn.com/media/content/2014/Jul/toyota-etios-xclusive-pic-photo-image-04072014-m1_560x420.jpg?tr=w-420',
-    pricePerKm: 14,
-    baseFare: 40,
-    minFare: 60,
-    features: ['AC', 'Music', 'Seat Belts', 'Comfortable'],
-    rating: 4.6,
-    totalRides: 12500
-  },
-  {
-    id: 'SWIFT_DZIRE',
-    name: 'Swift Dzire',
-    capacity: 4,
-    luggage: 2,
-    image: 'https://www.ecorentacar.com/wp-content/uploads/2022/11/01-4.jpg',
-    pricePerKm: 16,
-    baseFare: 40,
-    minFare: 60,
-    features: ['AC', 'Music', 'Comfortable', 'Seat Belts'],
-    rating: 4.8,
-    totalRides: 18200,
-    popular: true
-  },
-  {
-    id: 'MARUTI_SUZUKI_ERTIGA',
-    name: 'Maruti Suzuki Ertiga',
-    capacity: 6,
-    luggage: 3,
-    image: 'https://blogs.gomechanic.com/wp-content/uploads/2020/04/How-the-Maruti-Suzuki-Ertiga-dominates-the-MPV-segment-01.jpg',
-    pricePerKm: 19,
-    baseFare: 50,
-    minFare: 80,
-    features: ['AC', 'Music', 'Spacious MUV', 'Extra Legroom'],
-    rating: 4.7,
-    totalRides: 9800
-  },
-  {
-    id: 'TOYOTA_INNOVA',
-    name: 'Toyota Innova',
-    capacity: 6,
-    luggage: 4,
-    image: 'https://images.financialexpressdigital.com/2021/07/toyota-Innova-crysta-2021.jpg',
-    pricePerKm: 20,
-    baseFare: 50,
-    minFare: 100,
-    features: ['AC', 'Music', 'Premium MUV', 'Extra Legroom'],
-    rating: 4.8,
-    totalRides: 14500
-  },
-  {
-    id: 'TOYOTA_INNOVA_CRYSTA',
-    name: 'Toyota Innova Crysta',
-    capacity: 6,
-    luggage: 4,
-    image: 'https://i.ytimg.com/vi/c_KKvkl1unE/sddefault.jpg',
-    pricePerKm: 22,
-    baseFare: 50,
-    minFare: 120,
-    features: ['AC', 'Premium Audio', 'Luxury Comfort', 'Extra Legroom'],
-    rating: 4.9,
-    totalRides: 8100
-  },
-  {
-    id: 'TEMPO_TRAVELLER_12',
-    name: 'Traveller Tempo (12s)',
-    capacity: 12,
-    luggage: 8,
-    image: 'https://www.simplytrip.in/articles/wp-content/uploads/2025/10/12-seater-tempo.jpg.webp',
-    pricePerKm: 28,
-    baseFare: 100,
-    minFare: 150,
-    features: ['AC', 'Music', 'Pushback Seats', 'PA System'],
-    rating: 4.6,
-    totalRides: 3200
-  },
-  {
-    id: 'TEMPO_TRAVELLER_16',
-    name: 'Traveller Tempo (16s)',
-    capacity: 16,
-    luggage: 10,
-    image: 'https://tejas-travels-prod.s3.ap-south-1.amazonaws.com/513922250_9969870213090517_5965926465895803421_n.jpg',
-    pricePerKm: 30,
-    baseFare: 100,
-    minFare: 150,
-    features: ['AC', 'Music', 'Pushback Seats', 'PA System', 'Extra Space'],
-    rating: 4.6,
-    totalRides: 2800
-  },
-  {
-    id: 'BUSES',
-    name: 'All Buses (22-50s)',
-    capacity: 50,
-    luggage: 20,
-    image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80',
-    pricePerKm: 0,
-    baseFare: 0,
-    minFare: 0,
-    features: ['AC/Non-AC', 'Group Travel', 'PA System'],
-    rating: 4.5,
-    totalRides: 1200,
-    isCustomPrice: true
-  }
-]
+  const vehicleTypes = [
+    {
+      name: 'Toyota Etios',
+      image: 'https://media.zigcdn.com/media/content/2014/Jul/toyota-etios-xclusive-pic-photo-image-04072014-m1_560x420.jpg?tr=w-420',
+      capacity: '4 Passengers',
+      luggage: '2 Bags',
+      fuel: 'Petrol',
+      price: '₹2,000',
+      pricePerDay: '₹2,000/day',
+      features: ['AC', 'Power Steering', 'Music System', 'Bluetooth']
+    },
+    {
+      name: 'Swift Dzire',
+      image: 'https://www.ecorentacar.com/wp-content/uploads/2022/11/01-4.jpg',
+      capacity: '4 Passengers',
+      luggage: '3 Bags',
+      fuel: 'Petrol/Diesel',
+      price: '₹2,500',
+      pricePerDay: '₹2,500/day',
+      features: ['AC', 'Power Windows', 'GPS', 'Bluetooth', 'USB Charger']
+    },
+    {
+      name: 'Maruti Suzuki Ertiga',
+      image: 'https://blogs.gomechanic.com/wp-content/uploads/2020/04/How-the-Maruti-Suzuki-Ertiga-dominates-the-MPV-segment-01.jpg',
+      capacity: '6 Passengers',
+      luggage: '3 Bags',
+      fuel: 'Diesel',
+      price: '₹3,500',
+      pricePerDay: '₹3,500/day',
+      features: ['AC', 'Spacious Seating', 'GPS', 'Bluetooth', 'USB Charger']
+    },
+    {
+      name: 'Toyota Innova',
+      image: 'https://images.financialexpressdigital.com/2021/07/toyota-Innova-crysta-2021.jpg',
+      capacity: '6 Passengers',
+      luggage: '4 Bags',
+      fuel: 'Diesel',
+      price: '₹4,500',
+      pricePerDay: '₹4,500/day',
+      features: ['AC', '7- Seater', 'GPS', 'Bluetooth', 'USB Charger', 'Roof Rails']
+    },
+    {
+      name: 'Toyota Innova Crysta',
+      image: 'https://i.ytimg.com/vi/c_KKvkl1unE/sddefault.jpg',
+      capacity: '6 Passengers',
+      luggage: '4 Bags',
+      fuel: 'Diesel',
+      price: '₹5,500',
+      pricePerDay: '₹5,500/day',
+      features: ['Luxury AC', 'Leather Seats', 'GPS', 'Premium Sound', 'Arm Rests']
+    },
+    {
+      name: 'Traveller Tempo (12s)',
+      image: 'https://www.simplytrip.in/articles/wp-content/uploads/2025/10/12-seater-tempo.jpg.webp',
+      capacity: '12 Passengers',
+      luggage: '8 Bags',
+      fuel: 'Diesel',
+      price: '₹8,000',
+      pricePerDay: '₹8,000/day',
+      features: ['AC', 'Pushback Seats', 'GPS', 'Music System', 'First Aid Kit']
+    },
+    {
+      name: 'Traveller Tempo (16s)',
+      image: 'https://tejas-travels-prod.s3.ap-south-1.amazonaws.com/513922250_9969870213090517_5965926465895803421_n.jpg',
+      capacity: '16 Passengers',
+      luggage: '12 Bags',
+      fuel: 'Diesel',
+      price: '₹9,500',
+      pricePerDay: '₹9,500/day',
+      features: ['AC', 'Pushback Seats', 'GPS', 'Music System', 'First Aid Kit']
+    },
+    {
+      name: 'All Buses (22-50s)',
+      image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80',
+      capacity: '22-50 Passengers',
+      luggage: 'Large Storage',
+      fuel: 'Diesel',
+      price: 'Custom',
+      pricePerDay: 'On Request',
+      features: ['AC/Non-AC', 'Comfortable Seating', 'GPS', 'PA System', 'First Aid Kit']
+    }
+  ]
 
   const benefits = [
     { icon: <Shield className="w-5 h-5" />, title: 'Fully Insured', description: 'Comprehensive insurance coverage' },
