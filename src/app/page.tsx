@@ -33,7 +33,7 @@ export default function G7TravelsPage() {
       description: 'Drivers familiar with Tirupati routes, temples, and pilgrimage sites'
     },
     {
-      icon: <Wallet className="w-6 h-6" />, // Assuming Wallet is imported if needed, replaced with generic icon otherwise
+      icon: <Wallet className="w-6 h-6" />,
       title: 'Best Prices',
       description: '₹20/km for all vehicles, transparent pricing, multiple payment options'
     },
@@ -77,9 +77,9 @@ export default function G7TravelsPage() {
   return (
     <>
       {/* Hero Section with Tabs */}
-      <section className="relative overflow-hidden py-12 md:py-16">
+      <section className="relative py-12 md:py-16">
         <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-white to-red-100 opacity-50" />
-        <div className="container mx-auto px-4 relative">
+        <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -109,50 +109,53 @@ export default function G7TravelsPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="max-w-6xl mx-auto"
           >
-            <Card className="shadow-2xl border-0 overflow-hidden">
+            <Card className="shadow-2xl border-0">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 p-1 bg-muted/50 h-auto">
-                  <TabsTrigger value="book" className="data-[state=active]:bg-white py-3">
+                {/* Updated TabsList for mobile wrapping */}
+                <TabsList className="flex flex-wrap w-full h-auto p-1 bg-muted/50 justify-start sm:justify-center">
+                  <TabsTrigger value="book" className="flex-1 min-w-[120px] data-[state=active]:bg-white py-3">
                     <Car className="w-4 h-4 mr-2" />
                     Quick Book
                   </TabsTrigger>
-                  <TabsTrigger value="advanced" className="data-[state=active]:bg-white py-3">
+                  <TabsTrigger value="advanced" className="flex-1 min-w-[120px] data-[state=active]:bg-white py-3">
                     <Settings className="w-4 h-4 mr-2" />
                     Advanced
                   </TabsTrigger>
-                  <TabsTrigger value="tracking" className="data-[state=active]:bg-white py-3">
+                  <TabsTrigger value="tracking" className="flex-1 min-w-[120px] data-[state=active]:bg-white py-3">
                     <Navigation className="w-4 h-4 mr-2" />
                     Track Ride
                   </TabsTrigger>
-                  <TabsTrigger value="history" className="data-[state=active]:bg-white py-3">
+                  <TabsTrigger value="history" className="flex-1 min-w-[120px] data-[state=active]:bg-white py-3">
                     <History className="w-4 h-4 mr-2" />
                     History
                   </TabsTrigger>
-                  <TabsTrigger value="compare" className="data-[state=active]:bg-white py-3">
+                  <TabsTrigger value="compare" className="flex-1 min-w-[120px] data-[state=active]:bg-white py-3">
                     <TrendingUp className="w-4 h-4 mr-2" />
                     Compare
                   </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="book" className="p-6">
-                  <RideBookingWithMap />
-                </TabsContent>
+                <div className="mt-4">
+                  <TabsContent value="book" className="p-4 sm:p-6 mt-0">
+                    <RideBookingWithMap />
+                  </TabsContent>
 
-                <TabsContent value="advanced" className="p-6">
-                  <AdvancedRideBooking />
-                </TabsContent>
+                  <TabsContent value="advanced" className="p-4 sm:p-6 mt-0">
+                    <AdvancedRideBooking />
+                  </TabsContent>
 
-                <TabsContent value="tracking" className="p-6">
-                  <RideTracking />
-                </TabsContent>
+                  <TabsContent value="tracking" className="p-4 sm:p-6 mt-0">
+                    <RideTracking />
+                  </TabsContent>
 
-                <TabsContent value="history" className="p-6">
-                  <RideHistory />
-                </TabsContent>
+                  <TabsContent value="history" className="p-4 sm:p-6 mt-0">
+                    <RideHistory />
+                  </TabsContent>
 
-                <TabsContent value="compare" className="p-6">
-                  <VehicleComparison />
-                </TabsContent>
+                  <TabsContent value="compare" className="p-4 sm:p-6 mt-0">
+                    <VehicleComparison />
+                  </TabsContent>
+                </div>
               </Tabs>
             </Card>
           </motion.div>
@@ -160,7 +163,7 @@ export default function G7TravelsPage() {
       </section>
 
       {/* Advanced Features Grid */}
-      <section className="py-16 bg-white">
+      <section className="relative py-16 bg-white z-10">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h3 className="text-3xl font-bold mb-4">Advanced Features</h3>
@@ -194,7 +197,7 @@ export default function G7TravelsPage() {
       </section>
 
       {/* Service Areas */}
-      <section className="py-16 bg-gradient-to-br from-slate-50 to-orange-50/50">
+      <section className="relative py-16 bg-gradient-to-br from-slate-50 to-orange-50/50 z-10">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h3 className="text-3xl font-bold mb-4">Service Areas</h3>
@@ -221,7 +224,7 @@ export default function G7TravelsPage() {
       </section>
 
       {/* Features */}
-      <section className="py-16 bg-white">
+      <section className="relative py-16 bg-white z-10">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h3 className="text-3xl font-bold mb-4">Why Choose G7 Travels?</h3>
@@ -255,7 +258,7 @@ export default function G7TravelsPage() {
       </section>
 
       {/* Vehicle Fleet */}
-      <section className="py-16 bg-gradient-to-br from-slate-50 to-orange-50/50">
+      <section className="relative py-16 bg-gradient-to-br from-slate-50 to-orange-50/50 z-10">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h3 className="text-3xl font-bold mb-4">Our Vehicle Fleet</h3>
@@ -300,7 +303,7 @@ export default function G7TravelsPage() {
       </section>
 
       {/* Promo Code Banner */}
-      <section className="py-12 bg-gradient-to-r from-orange-600 to-red-600 text-white">
+      <section className="relative py-12 bg-gradient-to-r from-orange-600 to-red-600 text-white z-10">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-center md:text-left">
@@ -317,7 +320,7 @@ export default function G7TravelsPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-slate-900 to-slate-800 text-white">
+      <section className="relative py-16 bg-gradient-to-r from-slate-900 to-slate-800 text-white z-10">
         <div className="container mx-auto px-4 text-center">
           <h3 className="text-3xl md:text-4xl font-bold mb-4">Ready to Experience the Future of Travel?</h3>
           <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
@@ -328,7 +331,10 @@ export default function G7TravelsPage() {
               size="lg"
               variant="secondary"
               className="bg-white text-slate-900 hover:bg-orange-50"
-              onClick={() => setActiveTab('book')}
+              onClick={() => {
+                setActiveTab('book')
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
             >
               <Car className="w-5 h-5 mr-2" />
               Quick Book
@@ -337,7 +343,10 @@ export default function G7TravelsPage() {
               size="lg"
               variant="outline"
               className="border-2 border-white text-white hover:bg-white/10"
-              onClick={() => setActiveTab('advanced')}
+              onClick={() => {
+                setActiveTab('advanced')
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
             >
               <Settings className="w-5 h-5 mr-2" />
               Advanced Booking
