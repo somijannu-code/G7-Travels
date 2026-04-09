@@ -19,11 +19,13 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        
+        {/* Wrapped Logo and Title in a Link */}
+        <Link href="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
           <img 
             src="/g7travels.png" 
             alt="G7 Travels Logo" 
-            className="w-20 h-20 object-contain" 
+            className="w-18 h-18 object-contain" 
           />
           <div>
             <h1 className="text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
@@ -31,7 +33,7 @@ export function Header() {
             </h1>
             <p className="text-xs text-muted-foreground hidden sm:block">Tirupati's Trusted Travel Partner</p>
           </div>
-        </div>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-6">
