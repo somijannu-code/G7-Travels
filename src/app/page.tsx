@@ -61,7 +61,7 @@ export default function G7TravelsPage() {
   ]
 
   const serviceAreas = [
-    'Tirupati City', 'Tirumala', 'Chandragiri', 'Sricity', 'Srikalahasti Temple'
+    'Tirupati City', 'Tirumala', 'Chandragiri', 'Sricity', 'Srikalahasti Temple', 
     'Renigunta Airport', 'Tirupati Railway Station', 'Bus Stands', 'Major Temples'
   ]
 
