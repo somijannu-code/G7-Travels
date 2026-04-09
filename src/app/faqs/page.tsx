@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, HelpCircle, ChevronDown, ChevronUp, Car, Calendar } from 'lucide-react'
+import { ArrowLeft, HelpCircle, ChevronDown, ChevronUp, Car, Calendar, Shield, CreditCard, Users, MapPin, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
