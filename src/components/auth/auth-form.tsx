@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Mail, Lock, User, ArrowRight, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { createClient } from '@/lib/supabase' // Ensure you created this file from the previous steps!
+import { createClient } from '@/lib/supabase'
 
 interface AuthFormProps {
   onSuccess?: () => void
@@ -107,9 +107,12 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
         className="w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl text-white font-bold text-2xl mb-4 shadow-lg">
-            G7
-          </div>
+          {/* Logo Replacement */}
+          <img 
+            src="/g7travels.png" 
+            alt="G7 Travels Logo" 
+            className="w-20 h-20 object-contain mx-auto mb-4" 
+          />
           <h1 className="text-2xl font-bold text-slate-900">Welcome to G7 Travels</h1>
           <p className="text-slate-600 mt-2">Your trusted travel partner in Tirupati</p>
         </div>
@@ -139,7 +142,6 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
 
               {/* Login Tab */}
               <TabsContent value="login">
-                {/* Note the <form> wrapper and onSubmit handler */}
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="login-email">Email Address</Label>
@@ -185,7 +187,6 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
                       Forgot Password?
                     </Button>
                   </div>
-                  {/* type="submit" triggers the form submission */}
                   <Button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white" disabled={isLoading}>
                     {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ArrowRight className="w-4 h-4 mr-2" />}
                     Login
@@ -195,7 +196,6 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
 
               {/* Register Tab */}
               <TabsContent value="register">
-                {/* Note the <form> wrapper and onSubmit handler */}
                 <form onSubmit={handleRegister} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="register-name">Full Name *</Label>
@@ -280,7 +280,6 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
                     </div>
                   </div>
 
-                  {/* type="submit" triggers the form submission */}
                   <Button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white" disabled={isLoading}>
                     {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <User className="w-4 h-4 mr-2" />}
                     Create Account
