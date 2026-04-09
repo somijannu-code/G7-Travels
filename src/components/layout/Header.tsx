@@ -29,7 +29,7 @@ export function Header() {
             <h1 className="text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
               G7 Travels
             </h1>
-            <p className="text-xs text-muted-foreground">Tirupati's Trusted Travel Partner</p>
+            <p className="text-xs text-muted-foreground hidden sm:block">Tirupati's Trusted Travel Partner</p>
           </div>
         </div>
 
@@ -52,9 +52,11 @@ export function Header() {
           </Link>
         </nav>
 
-        <div className="hidden md:flex items-center gap-3">
-          {/* Notifications */}
-          <div className="relative">
+        {/* Right Side Actions (Mobile & Desktop) */}
+        <div className="flex items-center gap-1 md:gap-3">
+          
+          {/* Notifications (Hidden on Mobile to save space) */}
+          <div className="hidden md:block relative">
             <Button
               variant="ghost"
               size="icon"
@@ -98,28 +100,31 @@ export function Header() {
             </AnimatePresence>
           </div>
 
+          {/* Login Button (Visible on both Mobile and Desktop) */}
           <Link href="/auth/login">
-            <Button variant="ghost" size="sm">
-              <LogIn className="w-4 h-4 mr-2" />
-              Login
+            <Button variant="ghost" size="sm" className="px-2 md:px-3">
+              <LogIn className="w-4 h-4 mr-1 md:mr-2" />
+              <span>Login</span>
             </Button>
           </Link>
-          <Link href="/auth/register">
+
+          {/* Sign Up Button (Hidden on Mobile to save space) */}
+          <Link href="/auth/register" className="hidden md:block">
             <Button size="sm" className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white">
               Sign Up
             </Button>
           </Link>
-        </div>
 
-        {/* Mobile Menu Button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="lg:hidden"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </Button>
+          {/* Mobile Menu Button (Hidden on Desktop) */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden ml-1"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </Button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -129,24 +134,18 @@ export function Header() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden border-t bg-white"
+            className="lg:hidden border-t bg-white overflow-hidden"
           >
             <div className="container mx-auto px-4 py-4 flex flex-col gap-3">
-              <Link href="/" className="text-sm font-medium py-2">Home</Link>
-              <Link href="/book-ride" className="text-sm font-medium py-2">Book Ride</Link>
-              <Link href="/rental-cars" className="text-sm font-medium py-2">Rental Cars</Link>
-              <Link href="/services" className="text-sm font-medium py-2">Services</Link>
-              <Link href="/about" className="text-sm font-medium py-2">About Us</Link>
+              <Link href="/" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Home</Link>
+              <Link href="/book-ride" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Book Ride</Link>
+              <Link href="/rental-cars" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Rental Cars</Link>
+              <Link href="/services" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Services</Link>
+              <Link href="/about" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>About Us</Link>
               <div className="h-px bg-border my-2" />
-              <Link href="/auth/login">
-                <Button variant="ghost" size="sm" className="w-full justify-start">
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Login
-                </Button>
-              </Link>
-              <Link href="/auth/register">
+              <Link href="/auth/register" onClick={() => setMobileMenuOpen(false)}>
                 <Button size="sm" className="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white">
-                  Sign Up
+                  Create an Account
                 </Button>
               </Link>
             </div>
