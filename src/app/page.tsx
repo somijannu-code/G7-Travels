@@ -320,37 +320,39 @@ export default function G7TravelsPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative py-16 bg-gradient-to-r from-slate-900 to-slate-800 text-white z-10">
+      <section className="relative py-20 bg-gradient-to-r from-slate-900 to-slate-800 text-white z-10">
         <div className="container mx-auto px-4 text-center">
-          <h3 className="text-3xl md:text-4xl font-bold mb-4">Ready to Experience the Future of Travel?</h3>
-          <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
+          <h3 className="text-3xl md:text-5xl font-bold mb-6">Ready to Experience the Future of Travel?</h3>
+          <p className="text-xl opacity-90 mb-10 max-w-2xl mx-auto">
             Book now with advanced features like ride scheduling, multiple stops, real-time tracking, and more!
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button
-              size="lg"
-              variant="secondary"
-              className="bg-white text-slate-900 hover:bg-orange-50"
-              onClick={() => {
-                setActiveTab('book')
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-              }}
-            >
-              <Car className="w-5 h-5 mr-2" />
-              Quick Book
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-2 border-white text-white hover:bg-white/10"
-              onClick={() => {
-                setActiveTab('advanced')
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-              }}
-            >
-              <Settings className=border-2 border-white text-white hover:bg-white/10" />
-              Advanced Booking
-            </Button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white border-0 shadow-xl shadow-orange-500/30 h-16 px-10 text-lg rounded-full font-semibold w-full sm:w-auto"
+                onClick={() => {
+                  setActiveTab('book')
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }}
+              >
+                <Car className="w-6 h-6 mr-3" />
+                Quick Book
+              </Button>
+            </motion.div>
+            
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="outline"
+                className="bg-white text-orange-600 border-0 hover:bg-orange-50 hover:text-orange-700 shadow-xl h-16 px-10 text-lg rounded-full font-semibold w-full sm:w-auto"
+                onClick={() => {
+                  setActiveTab('advanced')
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }}
+              >
+                <Settings className="w-6 h-6 mr-3 text-orange-500" />
+                Advanced Booking
+              </Button>
+            </motion.div>
           </div>
         </div>
       </section>
