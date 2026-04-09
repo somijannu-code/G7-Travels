@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 
-// Vehicle pricing configuration for Tirupati area
-// Updated to 20 Rs per KM as requested
+// Updated Vehicle pricing configuration for Tirupati area based on new rates
 const VEHICLE_PRICING = {
-  HATCHBACK: { baseFare: 30, perKmRate: 30, perMinuteRate: 1, minimumFare: 50 },
-  SEDAN: { baseFare: 40, perKmRate: 30, perMinuteRate: 1.5, minimumFare: 60 },
-  SUV: { baseFare: 50, perKmRate: 30, perMinuteRate: 2, minimumFare: 80 },
-  PREMIUM_SEDAN: { baseFare: 30, perKmRate: 20, perMinuteRate: 2.5, minimumFare: 100 },
-  TEMPO_TRAVELLER: { baseFare: 100, perKmRate: 20, perMinuteRate: 3, minimumFare: 150 },
-  MINIBUS: { baseFare: 100, perKmRate: 20, perMinuteRate: 4, minimumFare: 200 }
+  TOYOTA_ETIOS: { baseFare: 40, perKmRate: 14, perMinuteRate: 1, minimumFare: 60 },
+  SWIFT_DZIRE: { baseFare: 40, perKmRate: 16, perMinuteRate: 1, minimumFare: 60 },
+  MARUTI_SUZUKI_ERTIGA: { baseFare: 50, perKmRate: 19, perMinuteRate: 1.5, minimumFare: 80 },
+  TOYOTA_INNOVA: { baseFare: 50, perKmRate: 20, perMinuteRate: 2, minimumFare: 100 },
+  TOYOTA_INNOVA_CRYSTA: { baseFare: 50, perKmRate: 22, perMinuteRate: 2, minimumFare: 120 },
+  TEMPO_TRAVELLER_12: { baseFare: 100, perKmRate: 28, perMinuteRate: 3, minimumFare: 150 },
+  TEMPO_TRAVELLER_16: { baseFare: 100, perKmRate: 30, perMinuteRate: 3, minimumFare: 150 },
+  BUSES: { baseFare: 0, perKmRate: 0, perMinuteRate: 0, minimumFare: 0 } // Custom Pricing
 }
 
 // Calculate distance between two coordinates (Haversine formula) in km
@@ -34,7 +35,6 @@ function estimateDuration(distance: number): number {
 
 // Geo-fence validation for Tirupati area
 function validateTirupatiLocation(lat: number, lon: number): boolean {
-  // Tirupati approximate bounds
   const TIRUPATI_BOUNDS = {
     minLat: 13.5,
     maxLat: 13.7,
@@ -42,7 +42,6 @@ function validateTirupatiLocation(lat: number, lon: number): boolean {
     maxLon: 79.6
   }
 
-  // Also include nearby areas
   const NEARBY_AREAS = [
     { lat: 13.6833, lon: 79.35, radius: 20 }, // Tirumala
     { lat: 13.5767, lon: 79.3, radius: 15 }, // Chandragiri
@@ -50,13 +49,11 @@ function validateTirupatiLocation(lat: number, lon: number): boolean {
     { lat: 13.64, lon: 79.3, radius: 10 }, // Renigunta Airport
   ]
 
-  // Check Tirupati bounds
   if (lat >= TIRUPATI_BOUNDS.minLat && lat <= TIRUPATI_BOUNDS.maxLat &&
       lon >= TIRUPATI_BOUNDS.minLon && lon <= TIRUPATI_BOUNDS.maxLon) {
     return true
   }
 
-  // Check nearby areas
   for (const area of NEARBY_AREAS) {
     const distance = calculateDistance(lat, lon, area.lat, area.lon)
     if (distance <= area.radius) {
@@ -72,7 +69,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { pickupLat, pickupLon, dropLat, dropLon, vehicleType } = body
 
-    // Validate coordinates
     if (!pickupLat || !pickupLon || !dropLat || !dropLon) {
       return NextResponse.json(
         { error: 'Pickup and drop coordinates are required' },
@@ -80,7 +76,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate vehicle type
     const vehicleTypeUpper = vehicleType?.toUpperCase()
     if (!vehicleTypeUpper || !VEHICLE_PRICING[vehicleTypeUpper as keyof typeof VEHICLE_PRICING]) {
       return NextResponse.json(
@@ -89,7 +84,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Geo-fence validation
     if (!validateTirupatiLocation(pickupLat, pickupLon)) {
       return NextResponse.json(
         { error: 'Pickup location is outside our service area. We only serve Tirupati and surrounding areas.' },
@@ -104,18 +98,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Calculate distance
     const distance = calculateDistance(pickupLat, pickupLon, dropLat, dropLon)
-
-    // Calculate duration
     const duration = estimateDuration(distance)
-
-    // Get pricing
     const pricing = VEHICLE_PRICING[vehicleTypeUpper as keyof typeof VEHICLE_PRICING]
 
-    // Calculate fare components
-    const distanceFare = distance * pricing.perKmRate
-    const timeFare = duration * pricing.perMinuteRate
+    let distanceFare = distance * pricing.perKmRate
+    let timeFare = duration * pricing.perMinuteRate
     let estimatedFare = pricing.baseFare + distanceFare + timeFare
 
     // Apply minimum fare
@@ -123,15 +111,19 @@ export async function POST(request: NextRequest) {
       estimatedFare = pricing.minimumFare
     }
 
-    // Calculate GST (18%)
+    // Special handler for buses (Price on request)
+    if (vehicleTypeUpper === 'BUSES') {
+      distanceFare = 0
+      timeFare = 0
+      estimatedFare = 0
+    }
+
     const gstAmount = estimatedFare * 0.18
     const subTotalAmount = estimatedFare + gstAmount
 
-    // AUTOMATIC DISCOUNT: Give minus for all GST and Time Charges
     const discountAmount = timeFare + gstAmount
-    const totalAfterDiscount = subTotalAmount - discountAmount
+    const totalAfterDiscount = vehicleTypeUpper === 'BUSES' ? 0 : subTotalAmount - discountAmount
 
-    // Check for surge pricing SAFELY
     let surgeMultiplier = 1.0
     
     try {
@@ -153,7 +145,6 @@ export async function POST(request: NextRequest) {
       console.warn('Could not fetch surge pricing from database. Defaulting to 1.0x surge.', dbError)
     }
 
-    // Apply surge to the discounted total
     const finalAmount = totalAfterDiscount * surgeMultiplier
 
     return NextResponse.json({
@@ -165,7 +156,7 @@ export async function POST(request: NextRequest) {
         distanceFare: Math.round(distanceFare),
         timeFare: Math.round(timeFare),
         gstAmount: Math.round(gstAmount),
-        discountAmount: Math.round(discountAmount), // Added discount exposure
+        discountAmount: Math.round(discountAmount),
         surgeMultiplier,
         estimatedFare: Math.round(estimatedFare),
         totalAmount: Math.round(finalAmount),
@@ -174,7 +165,7 @@ export async function POST(request: NextRequest) {
           distanceCharge: Math.round(distanceFare),
           timeCharge: Math.round(timeFare),
           gst: Math.round(gstAmount),
-          discount: Math.round(discountAmount), // Added discount breakdown
+          discount: Math.round(discountAmount),
           surgeCharge: surgeMultiplier > 1.0 ? Math.round(totalAfterDiscount * (surgeMultiplier - 1)) : 0
         }
       }
