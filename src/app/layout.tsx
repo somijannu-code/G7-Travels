@@ -45,9 +45,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased text-foreground bg-slate-50`}
       >
-        <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 to-orange-50">
+        <div className="min-h-screen flex flex-col relative z-0">
           <Header />
           <main className="flex-1 flex flex-col">
             {children}
