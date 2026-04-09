@@ -240,20 +240,13 @@ export default function RefundPolicyPage() {
               </p>
               <div className="space-y-2">
                 <p className="text-sm"><strong>Email:</strong> refunds@g7travels.com</p>
-                <p className="text-sm"><strong>Phone:</strong> +91 98765 43210</p>
+                <p className="text-sm"><strong>Phone:</strong> +91 90148 78313</p>
                 <p className="text-sm"><strong>Available:</strong> 24/7</p>
               </div>
             </CardContent>
           </Card>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-slate-900 text-white py-8 mt-auto">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-slate-400">© 2024 G7 Travels. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   )
 }
