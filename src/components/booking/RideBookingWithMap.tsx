@@ -46,14 +46,14 @@ export function RideBookingWithMap() {
 
   // Synced Vehicle Fleet
   const vehicleTypes = [
-    { id: 'TOYOTA_ETIOS', name: 'Toyota Etios', capacity: '4 Passengers', luggage: '2 Bags', image: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=800&q=80', price: '14' },
-    { id: 'SWIFT_DZIRE', name: 'Swift Dzire', capacity: '4 Passengers', luggage: '2 Bags', image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&q=80', price: '16', popular: true },
-    { id: 'MARUTI_SUZUKI_ERTIGA', name: 'Maruti Ertiga', capacity: '6 Passengers', luggage: '3 Bags', image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80', price: '19' },
-    { id: 'TOYOTA_INNOVA', name: 'Toyota Innova', capacity: '6 Passengers', luggage: '4 Bags', image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80', price: '20' },
-    { id: 'TOYOTA_INNOVA_CRYSTA', name: 'Innova Crysta', capacity: '6 Passengers', luggage: '4 Bags', image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&q=80', price: '22' },
-    { id: 'TEMPO_TRAVELLER_12', name: 'Tempo (12s)', capacity: '12 Passengers', luggage: '8 Bags', image: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&q=80', price: '28' },
-    { id: 'TEMPO_TRAVELLER_16', name: 'Tempo (16s)', capacity: '16 Passengers', luggage: '10 Bags', image: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&q=80', price: '30' },
-    { id: 'BUSES', name: 'All Buses (22-50s)', capacity: '22-50 Passengers', luggage: 'Large', image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80', price: 'Custom' }
+    { name: 'Toyota Etios', capacity: '4', image: 'https://media.zigcdn.com/media/content/2014/Jul/toyota-etios-xclusive-pic-photo-image-04072014-m1_560x420.jpg?tr=w-420', price: '₹14' },
+    { name: 'Swift Dzire', capacity: '4', image: 'https://www.ecorentacar.com/wp-content/uploads/2022/11/01-4.jpg', price: '₹16' },
+    { name: 'Maruti Suzuki Ertiga', capacity: '6', image: 'https://blogs.gomechanic.com/wp-content/uploads/2020/04/How-the-Maruti-Suzuki-Ertiga-dominates-the-MPV-segment-01.jpg', price: '₹19' },
+    { name: 'Toyota Innova', capacity: '6', image: 'https://images.financialexpressdigital.com/2021/07/toyota-Innova-crysta-2021.jpg', price: '₹20' },
+    { name: 'Toyota Innova Crysta', capacity: '6', image: 'https://i.ytimg.com/vi/c_KKvkl1unE/sddefault.jpg', price: '₹22' },
+    { name: 'Traveller Tempo (12s)', capacity: '12', image: 'https://www.simplytrip.in/articles/wp-content/uploads/2025/10/12-seater-tempo.jpg.webp', price: '₹28' },
+    { name: 'Traveller Tempo (16s)', capacity: '16', image: 'https://tejas-travels-prod.s3.ap-south-1.amazonaws.com/513922250_9969870213090517_5965926465895803421_n.jpg', price: '₹30' },
+    { name: 'All Buses (22-50s)', capacity: '22-50', image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80', price: 'Custom' }
   ]
 
   const handleGetEstimate = async () => {
