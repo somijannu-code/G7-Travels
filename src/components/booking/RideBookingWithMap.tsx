@@ -37,23 +37,23 @@ export function RideBookingWithMap() {
   const [dropLocation, setDropLocation] = useState('')
   const [dropCoords, setDropCoords] = useState({ lat: 0, lon: 0 })
   
-  // Default to Swift Dzire
+  // State for the selected vehicle (Default to Swift Dzire)
   const [vehicleType, setVehicleType] = useState('SWIFT_DZIRE')
   
   const [isLoading, setIsLoading] = useState(false)
   const [estimate, setEstimate] = useState<FareEstimate | null>(null)
   const [error, setError] = useState('')
 
-  // Synced Vehicle Fleet
+  // Synced Vehicle Fleet with proper IDs
   const vehicleTypes = [
-    { name: 'Toyota Etios', capacity: '4', image: 'https://media.zigcdn.com/media/content/2014/Jul/toyota-etios-xclusive-pic-photo-image-04072014-m1_560x420.jpg?tr=w-420', price: '₹14' },
-    { name: 'Swift Dzire', capacity: '4', image: 'https://www.ecorentacar.com/wp-content/uploads/2022/11/01-4.jpg', price: '₹16' },
-    { name: 'Maruti Suzuki Ertiga', capacity: '6', image: 'https://blogs.gomechanic.com/wp-content/uploads/2020/04/How-the-Maruti-Suzuki-Ertiga-dominates-the-MPV-segment-01.jpg', price: '₹19' },
-    { name: 'Toyota Innova', capacity: '6', image: 'https://images.financialexpressdigital.com/2021/07/toyota-Innova-crysta-2021.jpg', price: '₹20' },
-    { name: 'Toyota Innova Crysta', capacity: '6', image: 'https://i.ytimg.com/vi/c_KKvkl1unE/sddefault.jpg', price: '₹22' },
-    { name: 'Traveller Tempo (12s)', capacity: '12', image: 'https://www.simplytrip.in/articles/wp-content/uploads/2025/10/12-seater-tempo.jpg.webp', price: '₹28' },
-    { name: 'Traveller Tempo (16s)', capacity: '16', image: 'https://tejas-travels-prod.s3.ap-south-1.amazonaws.com/513922250_9969870213090517_5965926465895803421_n.jpg', price: '₹30' },
-    { name: 'All Buses (22-50s)', capacity: '22-50', image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80', price: 'Custom' }
+    { id: 'TOYOTA_ETIOS', name: 'Toyota Etios', capacity: '4 Passengers', luggage: '2 Bags', image: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=800&q=80', price: '14', features: ['AC', 'Music'] },
+    { id: 'SWIFT_DZIRE', name: 'Swift Dzire', capacity: '4 Passengers', luggage: '2 Bags', image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&q=80', price: '16', features: ['AC', 'Comfortable'], popular: true },
+    { id: 'MARUTI_SUZUKI_ERTIGA', name: 'Maruti Suzuki Ertiga', capacity: '6 Passengers', luggage: '3 Bags', image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80', price: '19', features: ['AC', 'Spacious MUV'] },
+    { id: 'TOYOTA_INNOVA', name: 'Toyota Innova', capacity: '6 Passengers', luggage: '4 Bags', image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80', price: '20', features: ['AC', 'Premium MUV'] },
+    { id: 'TOYOTA_INNOVA_CRYSTA', name: 'Toyota Innova Crysta', capacity: '6 Passengers', luggage: '4 Bags', image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&q=80', price: '22', features: ['AC', 'Luxury Comfort'] },
+    { id: 'TEMPO_TRAVELLER_12', name: 'Traveller Tempo (12)', capacity: '12 Passengers', luggage: '8 Bags', image: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&q=80', price: '28', features: ['AC', 'Pushback Seats'] },
+    { id: 'TEMPO_TRAVELLER_16', name: 'Traveller Tempo (16)', capacity: '16 Passengers', luggage: '10 Bags', image: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&q=80', price: '30', features: ['AC', 'Pushback Seats'] },
+    { id: 'BUSES', name: 'All Buses (22-50 Seats)', capacity: '22-50 Passengers', luggage: 'Large Storage', image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80', price: 'Custom', features: ['AC/Non-AC', 'Group Travel'] }
   ]
 
   const handleGetEstimate = async () => {
@@ -61,7 +61,7 @@ export function RideBookingWithMap() {
     setEstimate(null)
 
     if (!pickupLocation || !pickupCoords.lat || !dropLocation || !dropCoords.lat) {
-      setError('Please select both pickup and drop locations from the suggestions')
+      setError('Please select both pickup and drop locations from the dropdown suggestions.')
       return
     }
 
@@ -70,9 +70,7 @@ export function RideBookingWithMap() {
     try {
       const response = await fetch('/api/rides/estimate', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           pickupLat: pickupCoords.lat,
           pickupLon: pickupCoords.lon,
@@ -90,7 +88,7 @@ export function RideBookingWithMap() {
 
       setEstimate(data.estimate)
       
-      // Smooth scroll to estimate
+      // Auto-scroll to the estimate after a short delay
       setTimeout(() => {
         estimateRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }, 100)
@@ -102,21 +100,22 @@ export function RideBookingWithMap() {
     }
   }
 
-  const handleBookRide = () => {
+  const handleWhatsAppBooking = () => {
     if (!estimate) return
     setIsLoading(true)
-    
+
     const vehicleName = vehicleTypes.find(v => v.id === vehicleType)?.name || vehicleType
     const priceText = vehicleType === 'BUSES' ? '*Price on Request*' : `*₹${estimate.totalAmount}*`
 
-    const message = `*🚕 NEW QUICK RIDE REQUEST | G7 TRAVELS*
+    const message = `*🚕 NEW QUICK RIDE | G7 TRAVELS*
     
 *🟢 Pickup:* ${pickupLocation}
 *🔴 Drop:* ${dropLocation}
 *🚘 Vehicle:* ${vehicleName}
 
 *💰 FARE SUMMARY*
-- Estimated Fare: ${priceText}
+- Payment: Cash/UPI
+- Total Fare: ${priceText}
 
 Please confirm my booking. Thank you! ✅`
 
@@ -128,22 +127,24 @@ Please confirm my booking. Thank you! ✅`
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
       <Card className="border-0 shadow-lg ring-1 ring-slate-100">
-        <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-6 rounded-t-xl">
+        <CardHeader className="border-b bg-slate-50/50 pb-6 rounded-t-xl">
           <CardTitle className="flex items-center gap-2 text-2xl">
             <Car className="h-6 w-6 text-orange-600" />
-            Quick Book
+            Quick Ride Booking
           </CardTitle>
           <CardDescription className="mt-1 font-medium">
-            Enter your pickup and drop locations to get an instant fare estimate
+            Enter your pickup and drop locations to instantly find a vehicle and get a fare estimate.
           </CardDescription>
         </CardHeader>
         
-        <CardContent className="space-y-6 pt-6">
-          <div className="grid md:grid-cols-2 gap-4">
-            {/* Pickup Location */}
-            <div className="space-y-2 relative">
+        <CardContent className="space-y-8 pt-8">
+          
+          {/* Location Inputs */}
+          <div className="grid md:grid-cols-2 gap-6 relative z-10">
+            <div className="space-y-2 relative bg-white">
+              <div className="absolute -left-6 top-9 w-4 h-4 rounded-full bg-green-100 border-4 border-green-500 flex items-center justify-center shadow-sm md:hidden" />
               <Label htmlFor="pickup" className="font-semibold text-slate-700 flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500 ring-4 ring-green-100" />
+                <MapPin className="h-4 w-4 text-green-600" />
                 Pickup Location
               </Label>
               <LocationAutocomplete
@@ -158,10 +159,10 @@ Please confirm my booking. Thank you! ✅`
               />
             </div>
 
-            {/* Drop Location */}
-            <div className="space-y-2 relative">
+            <div className="space-y-2 relative bg-white">
+              <div className="absolute -left-6 top-9 w-4 h-4 rounded-full bg-red-100 border-4 border-red-500 flex items-center justify-center shadow-sm md:hidden" />
               <Label htmlFor="drop" className="font-semibold text-slate-700 flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-red-500 ring-4 ring-red-100" />
+                <MapPin className="h-4 w-4 text-red-600" />
                 Drop Location
               </Label>
               <LocationAutocomplete
@@ -177,48 +178,82 @@ Please confirm my booking. Thank you! ✅`
             </div>
           </div>
 
-          <hr className="border-slate-100 my-2" />
+          <hr className="border-slate-100" />
 
           {/* Vehicle Type Selection */}
           <div className="space-y-4 pt-2">
-            <Label className="text-lg font-bold text-slate-800">Select Vehicle Type</Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-              {vehicleTypes.map((vehicle) => (
-                <motion.div key={vehicle.id} whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }} className="relative">
-                  {vehicle.popular && (
-                    <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[9px] font-black tracking-wider px-2 py-0.5 rounded-full shadow-md z-10">
-                      POPULAR
-                    </div>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setVehicleType(vehicle.id)
-                      setEstimate(null)
-                    }}
-                    className={`w-full p-4 rounded-xl border-2 text-left transition-all overflow-hidden h-full ${
-                      vehicleType === vehicle.id
-                        ? 'border-orange-500 bg-orange-50/50 shadow-md ring-1 ring-orange-500/20'
-                        : 'border-slate-200 hover:border-orange-300 hover:shadow-sm bg-white'
-                    }`}
+            <Label className="text-lg font-bold text-slate-800">Select Vehicle</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {vehicleTypes.map((vehicle) => {
+                // FIXED LOGIC: Checks the actual ID against the state
+                const isSelected = vehicleType === vehicle.id;
+                
+                return (
+                  <motion.div
+                    key={vehicle.id}
+                    whileHover={{ y: -4 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="relative"
                   >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="w-16 h-10 rounded-md overflow-hidden bg-slate-100 flex-shrink-0">
-                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover" />
+                    {vehicle.popular && (
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] font-black tracking-wider px-3 py-1 rounded-full shadow-md z-10">
+                        MOST POPULAR
                       </div>
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                        vehicleType === vehicle.id ? 'border-orange-500 bg-orange-500' : 'border-slate-300'
-                      }`}>
-                        {vehicleType === vehicle.id && <CheckCircle2 className="h-3 w-3 text-white" />}
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setVehicleType(vehicle.id) // Sets the ID correctly
+                        setEstimate(null)
+                      }}
+                      className={`w-full p-5 rounded-xl border-2 text-left transition-all overflow-hidden h-full ${
+                        isSelected
+                          ? 'border-orange-500 bg-orange-50/50 shadow-[0_0_20px_rgba(249,115,22,0.15)] ring-1 ring-orange-500/20'
+                          : 'border-slate-200 hover:border-orange-300 hover:shadow-md bg-white'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="w-24 h-14 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0 shadow-inner">
+                          <img
+                            src={vehicle.image}
+                            alt={vehicle.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                          isSelected ? 'border-orange-500 bg-orange-500' : 'border-slate-300'
+                        }`}>
+                          {isSelected && <CheckCircle2 className="h-4 w-4 text-white" />}
+                        </div>
                       </div>
-                    </div>
-                    <h3 className="font-bold text-slate-800 text-sm leading-tight">{vehicle.name}</h3>
-                    <div className="text-sm font-black text-orange-600 mt-1">
-                      {vehicle.price === 'Custom' ? 'On Request' : <>₹{vehicle.price}<span className="text-[10px] text-slate-500 font-semibold">/km</span></>}
-                    </div>
-                  </button>
-                </motion.div>
-              ))}
+                      <h3 className="font-bold text-slate-800 text-lg">{vehicle.name}</h3>
+                      
+                      <div className="text-xl font-black text-orange-600 mt-2 tracking-tight">
+                        {vehicle.price === 'Custom' ? 'On Request' : (
+                          <>₹{vehicle.price}<span className="text-sm text-slate-500 font-semibold tracking-normal">/km</span></>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-3 text-sm text-slate-500 font-medium mt-1 mb-3">
+                        <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {vehicle.capacity}</span>
+                        <span className="flex items-center gap-1"><Briefcase className="w-3.5 h-3.5" /> {vehicle.luggage}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {vehicle.features.map((feature, i) => (
+                          <span
+                            key={i}
+                            className={`text-[10px] uppercase font-bold tracking-wider px-2 py-1 rounded-md ${
+                              isSelected ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-600'
+                            }`}
+                          >
+                            {feature}
+                          </span>
+                        ))}
+                      </div>
+                    </button>
+                  </motion.div>
+                )
+              })}
             </div>
           </div>
 
@@ -228,17 +263,17 @@ Please confirm my booking. Thank you! ✅`
               <Button
                 onClick={handleGetEstimate}
                 disabled={isLoading}
-                className="w-full h-14 text-lg font-black tracking-wide bg-slate-900 hover:bg-slate-800 text-white shadow-xl rounded-xl"
+                className="w-full h-16 text-lg font-black tracking-wide bg-slate-900 hover:bg-slate-800 text-white shadow-xl shadow-slate-900/20 rounded-xl"
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin text-orange-500" />
-                    Calculating Best Route...
+                    <Loader2 className="mr-2 h-6 w-6 animate-spin text-orange-500" />
+                    Calculating Fare...
                   </>
                 ) : (
                   <>
-                    <Route className="mr-2 h-5 w-5 text-orange-500" />
-                    Get Fare Estimate
+                    <Search className="mr-2 h-6 w-6 text-orange-500" />
+                    Get Instant Estimate
                   </>
                 )}
               </Button>
@@ -252,7 +287,7 @@ Please confirm my booking. Thank you! ✅`
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 font-bold text-sm flex items-center"
+                className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 font-bold text-sm flex items-center shadow-sm"
               >
                 <div className="w-2.5 h-2.5 rounded-full bg-red-500 mr-3 animate-pulse" />
                 {error}
@@ -268,7 +303,7 @@ Please confirm my booking. Thank you! ✅`
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="pt-4"
+                  className="space-y-4 pt-4"
                 >
                   <Card className="border-2 border-orange-200 bg-white shadow-xl overflow-hidden rounded-2xl">
                     <div className="h-1.5 w-full bg-gradient-to-r from-orange-500 to-red-600" />
@@ -285,14 +320,14 @@ Please confirm my booking. Thank you! ✅`
                     </CardHeader>
                     <CardContent className="space-y-6 pt-6">
                       
-                      {/* Distance and Duration */}
+                      {/* Distance and Duration Cards */}
                       <div className="grid grid-cols-2 gap-4">
                         <div className="flex items-center gap-3 p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
                           <div className="bg-blue-100 p-2.5 rounded-lg text-blue-600">
                             <Route className="h-5 w-5" />
                           </div>
                           <div>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Distance</p>
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total Distance</p>
                             <p className="font-black text-slate-800 text-lg leading-tight">{estimate.distance} km</p>
                           </div>
                         </div>
@@ -301,18 +336,18 @@ Please confirm my booking. Thank you! ✅`
                             <Clock className="h-5 w-5" />
                           </div>
                           <div>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Est. Time</p>
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Est. Travel Time</p>
                             <p className="font-black text-slate-800 text-lg leading-tight">{estimate.duration} mins</p>
                           </div>
                         </div>
                       </div>
 
-                      {/* Detailed Fare Breakdown */}
+                      {/* Detailed Fare Breakdown or Bus Prompt */}
                       {vehicleType === 'BUSES' ? (
-                        <div className="bg-orange-50/50 rounded-2xl p-6 border-2 border-orange-200 text-center space-y-2">
-                          <h4 className="text-lg font-black text-orange-800 uppercase tracking-wide">Custom Bus Pricing</h4>
-                          <p className="text-orange-700 text-sm font-semibold max-w-md mx-auto">
-                            Bus trips vary based on duration and distance. Please confirm via WhatsApp for an exact quote.
+                        <div className="bg-orange-50/50 rounded-2xl p-8 border-2 border-orange-200 text-center space-y-3">
+                          <h4 className="text-xl font-black text-orange-800 uppercase tracking-wide">Custom Bus Pricing</h4>
+                          <p className="text-orange-700 font-semibold max-w-md mx-auto">
+                            Because bus trips vary greatly based on duration and total distance, please confirm via WhatsApp for an exact, tailored quote for your group.
                           </p>
                         </div>
                       ) : (
@@ -357,15 +392,15 @@ Please confirm my booking. Thank you! ✅`
                       )}
 
                       {/* Book Button */}
-                      <div className="pt-2">
+                      <div className="pt-4">
                         <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
                           <Button
-                            onClick={handleBookRide}
                             className="w-full h-16 text-xl rounded-2xl bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-xl shadow-green-500/30 font-black tracking-wide"
-                            size="lg"
+                            disabled={isLoading}
+                            onClick={handleWhatsAppBooking}
                           >
                             <Phone className="mr-3 h-6 w-6" />
-                            Book via WhatsApp
+                            Confirm Ride via WhatsApp
                           </Button>
                         </motion.div>
                       </div>
