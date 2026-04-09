@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { LocationAutocomplete } from '@/components/maps/LocationAutocomplete'
-import { MapPin, Car, Clock, Route, IndianRupee, CheckCircle2, Loader2, Phone, Users, Briefcase, TrendingUp } from 'lucide-react'
+import { MapPin, Car, Clock, Route, IndianRupee, CheckCircle2, Loader2, Phone, Users, Briefcase, TrendingUp, Search } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface FareEstimate {
