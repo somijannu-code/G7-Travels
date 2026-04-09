@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { Calendar, MapPin, Clock, Car, Shield, Users, Zap, Headphones, History, Settings, Navigation, Bell, Gift, TrendingUp, Award, Flame, Wallet } from 'lucide-react'
+import { Calendar, MapPin, Clock, Car, Shield, Users, Zap, Headphones, History, Settings, Navigation, Bell, Gift, TrendingUp, Award, Flame, Wallet, Map } from 'lucide-react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { RideBookingWithMap } from '@/components/booking/RideBookingWithMap'
 import { AdvancedRideBooking } from '@/components/booking/AdvancedRideBooking'
 import { RideTracking } from '@/components/booking/RideTracking'
@@ -265,7 +266,7 @@ export default function G7TravelsPage() {
           <div className="text-center mb-12">
             <h3 className="text-3xl font-bold mb-4">Our Vehicle Fleet</h3>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Choose from our wide range of well-maintained vehicles at ₹20/km
+              Choose from our wide range of well-maintained vehicles starting at ₹14/km
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-6xl mx-auto">
@@ -293,8 +294,14 @@ export default function G7TravelsPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-orange-600">
-                      {vehicle.price}
-                      <span className="text-sm text-muted-foreground font-normal">/km</span>
+                      {vehicle.price === 'Custom' ? (
+                        <span className="text-xl">Price on Request</span>
+                      ) : (
+                        <>
+                          {vehicle.price}
+                          <span className="text-sm text-muted-foreground font-normal">/km</span>
+                        </>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -328,7 +335,7 @@ export default function G7TravelsPage() {
           <p className="text-xl opacity-90 mb-10 max-w-2xl mx-auto">
             Book now with advanced features like ride scheduling, multiple stops, real-time tracking, and more!
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 flex-wrap">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white border-0 shadow-xl shadow-orange-500/30 h-16 px-10 text-lg rounded-full font-semibold w-full sm:w-auto"
@@ -354,6 +361,19 @@ export default function G7TravelsPage() {
                 <Settings className="w-6 h-6 mr-3 text-orange-500" />
                 Advanced Booking
               </Button>
+            </motion.div>
+
+            {/* Added Package Button */}
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link href="/pilgrimage-packages">
+                <Button
+                  variant="outline"
+                  className="bg-white text-orange-600 border-0 hover:bg-orange-50 hover:text-orange-700 shadow-xl h-16 px-10 text-lg rounded-full font-semibold w-full sm:w-auto"
+                >
+                  <Map className="w-6 h-6 mr-3 text-orange-500" />
+                  Pilgrimage Packages
+                </Button>
+              </Link>
             </motion.div>
           </div>
         </div>
