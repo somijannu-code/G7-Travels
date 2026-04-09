@@ -7,17 +7,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { MapPin, Car, Clock, ArrowRight, Search, Navigation, Calendar, RotateCcw, IndianRupee, Phone } from 'lucide-react'
+import { MapPin, Car, Clock, ArrowRight, Search, Navigation, Calendar, RotateCcw, IndianRupee, Phone, CheckCircle2, Users, Briefcase } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-
-interface VehicleOption {
-  type: string
-  name: string
-  image: string
-  capacity: string
-  price: string
-  estimatedTime: string
-}
 
 interface FareEstimate {
   distance: number
@@ -39,11 +30,16 @@ interface FareEstimate {
   }
 }
 
-const VEHICLE_OPTIONS: VehicleOption[] = [
-  { type: 'hatchback', name: 'Hatchback', image: '🚗', capacity: '4', price: '₹49/km', estimatedTime: '3 min' },
-  { type: 'sedan', name: 'Sedan', image: '🚙', capacity: '4', price: '₹69/km', estimatedTime: '4 min' },
-  { type: 'suv', name: 'SUV', image: '🚐', capacity: '6', price: '₹99/km', estimatedTime: '5 min' },
-  { type: 'premium_sedan', name: 'Premium Sedan', image: '🚘', capacity: '4', price: '₹149/km', estimatedTime: '6 min' },
+// Synced with your exact fleet and pricing
+const VEHICLE_OPTIONS = [
+  { type: 'TOYOTA_ETIOS', name: 'Toyota Etios', image: '🚗', capacity: '4', luggage: '2', price: '₹14/km', basePrice: 14, estimatedTime: '3 min' },
+  { type: 'SWIFT_DZIRE', name: 'Swift Dzire', image: '🚙', capacity: '4', luggage: '2', price: '₹16/km', basePrice: 16, estimatedTime: '4 min', popular: true },
+  { type: 'MARUTI_SUZUKI_ERTIGA', name: 'Maruti Ertiga', image: '🚐', capacity: '6', luggage: '3', price: '₹19/km', basePrice: 19, estimatedTime: '5 min' },
+  { type: 'TOYOTA_INNOVA', name: 'Toyota Innova', image: '🚘', capacity: '6', luggage: '4', price: '₹20/km', basePrice: 20, estimatedTime: '6 min' },
+  { type: 'TOYOTA_INNOVA_CRYSTA', name: 'Innova Crysta', image: '✨', capacity: '6', luggage: '4', price: '₹22/km', basePrice: 22, estimatedTime: '8 min' },
+  { type: 'TEMPO_TRAVELLER_12', name: 'Tempo (12s)', image: '🚌', capacity: '12', luggage: '8', price: '₹28/km', basePrice: 28, estimatedTime: '10 min' },
+  { type: 'TEMPO_TRAVELLER_16', name: 'Tempo (16s)', image: '🚌', capacity: '16', luggage: '10', price: '₹30/km', basePrice: 30, estimatedTime: '12 min' },
+  { type: 'BUSES', name: 'All Buses', image: '🚍', capacity: '22-50', luggage: 'Max', price: 'Custom', basePrice: 0, estimatedTime: 'Contact Us' }
 ]
 
 const POPULAR_LOCATIONS = [
@@ -53,25 +49,49 @@ const POPULAR_LOCATIONS = [
   'Sri Venkateswara Zoological Park',
   'Chandragiri Fort',
   'ISKCON Temple',
-  'Kapila Theertham',
-  'Sri Govindaraja Swamy Temple'
+  'Kapila Theertham'
 ]
+
+// Animation variants for smooth sliding
+const slideVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 20 : -20,
+    opacity: 0
+  }),
+  center: {
+    zIndex: 1,
+    x: 0,
+    opacity: 1
+  },
+  exit: (direction: number) => ({
+    zIndex: 0,
+    x: direction < 0 ? 20 : -20,
+    opacity: 0
+  })
+}
 
 export function RideBooking() {
   const [pickup, setPickup] = useState('')
   const [drop, setDrop] = useState('')
-  const [selectedVehicle, setSelectedVehicle] = useState<string>('sedan')
+  const [selectedVehicle, setSelectedVehicle] = useState<string>('SWIFT_DZIRE')
   const [showPopular, setShowPopular] = useState<'pickup' | 'drop' | null>(null)
   const [fareEstimate, setFareEstimate] = useState<FareEstimate | null>(null)
   const [loading, setLoading] = useState(false)
   const [step, setStep] = useState<'location' | 'vehicle' | 'confirm'>('location')
   const [swapLocations, setSwapLocations] = useState(false)
+  const [direction, setDirection] = useState(1) // 1 for forward, -1 for backward
+
+  const changeStep = (newStep: 'location' | 'vehicle' | 'confirm', dir: number) => {
+    setDirection(dir)
+    setStep(newStep)
+  }
 
   const handleGetEstimate = async () => {
     if (!pickup || !drop) return
 
     setLoading(true)
     try {
+      // Mock coordinates for quick book UI
       const pickupCoords = { lat: 13.6288, lon: 79.4191 }
       const dropCoords = { lat: 13.6833, lon: 79.35 }
 
@@ -91,7 +111,7 @@ export function RideBooking() {
 
       if (data.success) {
         setFareEstimate(data.estimate)
-        setStep('vehicle')
+        changeStep('vehicle', 1)
       }
     } catch (error) {
       console.error('Failed to get estimate:', error)
@@ -100,54 +120,26 @@ export function RideBooking() {
     }
   }
 
-  const handleBookRide = async () => {
+  const handleWhatsAppBooking = () => {
     if (!fareEstimate) return
 
-    setLoading(true)
-    try {
-      // Create Database Record
-      const userId = 'demo-user-id'
-      const response = await fetch('/api/rides', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId,
-          pickupLat: 13.6288,
-          pickupLon: 79.4191,
-          pickupAddress: pickup,
-          dropLat: 13.6833,
-          dropLon: 79.35,
-          dropAddress: drop,
-          vehicleType: selectedVehicle,
-          estimatedFare: fareEstimate.totalAmount
-        })
-      })
+    const vehicleName = VEHICLE_OPTIONS.find(v => v.type === selectedVehicle)?.name || selectedVehicle
+    const priceText = selectedVehicle === 'BUSES' ? '*Price on Request*' : `*₹${fareEstimate.totalAmount}*`
+    
+    const message = `*🚕 New Quick Ride Booking (G7 Travels)*
+    
+*🟢 Pickup:* ${pickup}
+*🔴 Drop:* ${drop}
+*🚘 Vehicle:* ${vehicleName}
 
-      const data = await response.json()
-
-      if (data.success) {
-        // WhatsApp Redirect Logic added here!
-        const vehicleName = VEHICLE_OPTIONS.find(v => v.type === selectedVehicle)?.name || selectedVehicle
-        
-        const message = `*🚕 New Quick Ride Booking (G7 Travels)*
-        
-*Pickup:* ${pickup}
-*Drop:* ${drop}
-*Vehicle:* ${vehicleName}
-*Estimated Fare:* ₹${fareEstimate.totalAmount}
+*💰 FARE SUMMARY*
+- Estimated Fare: ${priceText}
 
 Please confirm my ride. Thank you!`
 
-        const whatsappUrl = `https://wa.me/919014878313?text=${encodeURIComponent(message)}`
-        window.open(whatsappUrl, '_blank')
-
-        setStep('confirm')
-      }
-    } catch (error) {
-      console.error('Failed to book ride:', error)
-    } finally {
-      setLoading(false)
-    }
+    const whatsappUrl = `https://wa.me/919014878313?text=${encodeURIComponent(message)}`
+    window.open(whatsappUrl, '_blank')
+    changeStep('confirm', 1)
   }
 
   const handleSwap = () => {
@@ -158,359 +150,367 @@ Please confirm my ride. Thank you!`
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto space-y-6">
-      <div className="flex items-center justify-center gap-2 mb-6">
-        <div className={`flex items-center gap-2 ${step === 'location' ? 'text-orange-600' : 'text-green-600'}`}>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${step === 'location' ? 'bg-orange-100' : 'bg-green-100'}`}>
-            {step !== 'location' ? '✓' : '1'}
+    <div className="w-full max-w-2xl mx-auto space-y-6 overflow-hidden pb-4">
+      {/* Premium Stepper */}
+      <div className="flex items-center justify-center gap-2 mb-6 px-4">
+        <div className={`flex items-center gap-2 transition-colors duration-300 ${step === 'location' ? 'text-orange-600' : 'text-green-600'}`}>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-sm transition-colors duration-300 ${step === 'location' ? 'bg-orange-500 text-white' : 'bg-green-500 text-white'}`}>
+            {step !== 'location' ? <CheckCircle2 className="w-4 h-4" /> : '1'}
           </div>
-          <span className="text-sm font-medium">Location</span>
+          <span className="text-sm font-bold hidden sm:block">Location</span>
         </div>
-        <div className={`w-8 h-0.5 ${step !== 'location' ? 'bg-green-600' : 'bg-slate-200'}`} />
-        <div className={`flex items-center gap-2 ${step === 'vehicle' ? 'text-orange-600' : step === 'confirm' ? 'text-green-600' : 'text-slate-400'}`}>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${step === 'vehicle' ? 'bg-orange-100' : step === 'confirm' ? 'bg-green-100' : 'bg-slate-100'}`}>
-            {step === 'confirm' ? '✓' : '2'}
+        <div className={`w-12 sm:w-20 h-1 rounded-full transition-colors duration-500 ${step !== 'location' ? 'bg-green-500' : 'bg-slate-200'}`} />
+        
+        <div className={`flex items-center gap-2 transition-colors duration-300 ${step === 'vehicle' ? 'text-orange-600' : step === 'confirm' ? 'text-green-600' : 'text-slate-400'}`}>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-sm transition-colors duration-300 ${step === 'vehicle' ? 'bg-orange-500 text-white' : step === 'confirm' ? 'bg-green-500 text-white' : 'bg-slate-100 text-slate-500'}`}>
+            {step === 'confirm' ? <CheckCircle2 className="w-4 h-4" /> : '2'}
           </div>
-          <span className="text-sm font-medium">Vehicle</span>
+          <span className="text-sm font-bold hidden sm:block">Vehicle</span>
         </div>
-        <div className={`w-8 h-0.5 ${step === 'confirm' ? 'bg-green-600' : 'bg-slate-200'}`} />
-        <div className={`flex items-center gap-2 ${step === 'confirm' ? 'text-green-600' : 'text-slate-400'}`}>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${step === 'confirm' ? 'bg-green-100' : 'bg-slate-100'}`}>
+        <div className={`w-12 sm:w-20 h-1 rounded-full transition-colors duration-500 ${step === 'confirm' ? 'bg-green-500' : 'bg-slate-200'}`} />
+        
+        <div className={`flex items-center gap-2 transition-colors duration-300 ${step === 'confirm' ? 'text-green-600' : 'text-slate-400'}`}>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-sm transition-colors duration-300 ${step === 'confirm' ? 'bg-green-500 text-white' : 'bg-slate-100 text-slate-500'}`}>
             3
           </div>
-          <span className="text-sm font-medium">Confirm</span>
+          <span className="text-sm font-bold hidden sm:block">Confirm</span>
         </div>
       </div>
 
-      {step === 'location' && (
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Navigation className="w-5 h-5 text-orange-600" />
-                Where to?
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2 relative">
-                <Label htmlFor="pickup">Pickup Location</Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-3 h-4 w-4 text-green-600" />
-                  <Input
-                    id="pickup"
-                    placeholder="Enter pickup location"
-                    className="pl-9 pr-10"
-                    value={pickup}
-                    onChange={(e) => setPickup(e.target.value)}
-                    onFocus={() => setShowPopular('pickup')}
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-1 top-1 h-8 w-8"
-                    onClick={() => {
-                      setPickup('Current Location')
-                      setShowPopular(null)
-                    }}
-                  >
-                    <Navigation className="h-4 w-4" />
+      <AnimatePresence mode="wait" custom={direction}>
+        {step === 'location' && (
+          <motion.div
+            key="location"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          >
+            <Card className="border-0 shadow-lg ring-1 ring-slate-100">
+              <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-4">
+                <CardTitle className="text-xl flex items-center gap-2">
+                  <Navigation className="w-5 h-5 text-orange-600" />
+                  Where to?
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 pt-6">
+                <div className="space-y-2 relative">
+                  <Label htmlFor="pickup" className="font-semibold text-slate-700">Pickup Location</Label>
+                  <div className="relative group">
+                    <div className="absolute left-3 top-3.5 w-2 h-2 rounded-full bg-green-500 ring-4 ring-green-100" />
+                    <Input
+                      id="pickup"
+                      placeholder="Enter pickup location"
+                      className="pl-9 pr-10 h-12 text-base transition-shadow focus-visible:ring-orange-500 border-slate-200"
+                      value={pickup}
+                      onChange={(e) => setPickup(e.target.value)}
+                      onFocus={() => setShowPopular('pickup')}
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-1 top-1.5 h-9 w-9 text-slate-400 hover:text-orange-600"
+                      onClick={() => {
+                        setPickup('Current Location')
+                        setShowPopular(null)
+                      }}
+                      title="Use current location"
+                    >
+                      <Navigation className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <AnimatePresence>
+                    {showPopular === 'pickup' && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -5, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: 'auto' }}
+                        exit={{ opacity: 0, y: -5, height: 0 }}
+                        className="bg-white border border-slate-100 shadow-xl rounded-xl p-3 space-y-1 absolute w-full z-20 top-full mt-2"
+                      >
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Popular Locations</p>
+                        {POPULAR_LOCATIONS.slice(0, 4).map((location) => (
+                          <Button
+                            key={location}
+                            variant="ghost"
+                            className="w-full justify-start text-sm h-10 hover:bg-orange-50 hover:text-orange-700"
+                            onClick={() => {
+                              setPickup(location)
+                              setShowPopular(null)
+                            }}
+                          >
+                            <MapPin className="w-4 h-4 mr-3 text-slate-400" />
+                            {location}
+                          </Button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <div className="flex justify-center -my-2 relative z-10">
+                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-10 w-10 rounded-full bg-white border-slate-200 shadow-sm hover:border-orange-300 hover:text-orange-600"
+                      onClick={handleSwap}
+                    >
+                      <RotateCcw className={`h-4 w-4 transition-transform duration-500 ${swapLocations ? 'rotate-180' : ''}`} />
+                    </Button>
+                  </motion.div>
+                </div>
+
+                <div className="space-y-2 relative">
+                  <Label htmlFor="drop" className="font-semibold text-slate-700">Drop Location</Label>
+                  <div className="relative">
+                    <div className="absolute left-3 top-3.5 w-2 h-2 rounded-full bg-red-500 ring-4 ring-red-100" />
+                    <Input
+                      id="drop"
+                      placeholder="Enter drop location"
+                      className="pl-9 h-12 text-base transition-shadow focus-visible:ring-orange-500 border-slate-200"
+                      value={drop}
+                      onChange={(e) => setDrop(e.target.value)}
+                      onFocus={() => setShowPopular('drop')}
+                    />
+                  </div>
+
+                  <AnimatePresence>
+                    {showPopular === 'drop' && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -5, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: 'auto' }}
+                        exit={{ opacity: 0, y: -5, height: 0 }}
+                        className="bg-white border border-slate-100 shadow-xl rounded-xl p-3 space-y-1 absolute w-full z-20 top-full mt-2"
+                      >
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Popular Locations</p>
+                        {POPULAR_LOCATIONS.map((location) => (
+                          <Button
+                            key={location}
+                            variant="ghost"
+                            className="w-full justify-start text-sm h-10 hover:bg-orange-50 hover:text-orange-700"
+                            onClick={() => {
+                              setDrop(location)
+                              setShowPopular(null)
+                            }}
+                          >
+                            <MapPin className="w-4 h-4 mr-3 text-slate-400" />
+                            {location}
+                          </Button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <Button variant="default" className="flex-1 h-12 bg-slate-900 hover:bg-slate-800 text-white shadow-md">
+                    <Car className="w-4 h-4 mr-2" /> Ride Now
+                  </Button>
+                  <Button variant="outline" className="flex-1 h-12 border-slate-200 hover:bg-slate-50 text-slate-700">
+                    <Calendar className="w-4 h-4 mr-2" /> Schedule
                   </Button>
                 </div>
 
-                <AnimatePresence>
-                  {showPopular === 'pickup' && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="bg-slate-50 rounded-lg p-3 space-y-2"
-                    >
-                      <p className="text-xs font-medium text-slate-600 mb-2">POPULAR LOCATIONS</p>
-                      {POPULAR_LOCATIONS.slice(0, 4).map((location) => (
-                        <Button
-                          key={location}
-                          variant="ghost"
-                          className="w-full justify-start text-sm h-8"
-                          onClick={() => {
-                            setPickup(location)
-                            setShowPopular(null)
-                          }}
-                        >
-                          <MapPin className="w-3 h-3 mr-2 text-slate-400" />
-                          {location}
-                        </Button>
-                      ))}
+                <Button
+                  className="w-full h-14 text-lg font-bold bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 shadow-lg shadow-orange-500/25 mt-2"
+                  disabled={!pickup || !drop || loading}
+                  onClick={handleGetEstimate}
+                >
+                  {loading ? (
+                    <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}>
+                      <Loader2 className="w-5 h-5 mr-2" />
                     </motion.div>
+                  ) : (
+                    <>
+                      <Search className="w-5 h-5 mr-2" />
+                      Find Vehicles
+                    </>
                   )}
-                </AnimatePresence>
-              </div>
-
-              <div className="flex justify-center">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 rounded-full bg-slate-100 hover:bg-slate-200"
-                  onClick={handleSwap}
-                >
-                  <RotateCcw className={`h-4 w-4 transition-transform ${swapLocations ? 'rotate-180' : ''}`} />
                 </Button>
-              </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
 
-              <div className="space-y-2 relative">
-                <Label htmlFor="drop">Drop Location</Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-3 h-4 w-4 text-red-600" />
-                  <Input
-                    id="drop"
-                    placeholder="Enter drop location"
-                    className="pl-9"
-                    value={drop}
-                    onChange={(e) => setDrop(e.target.value)}
-                    onFocus={() => setShowPopular('drop')}
-                  />
-                </div>
-
-                <AnimatePresence>
-                  {showPopular === 'drop' && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="bg-slate-50 rounded-lg p-3 space-y-2"
-                    >
-                      <p className="text-xs font-medium text-slate-600 mb-2">POPULAR LOCATIONS</p>
-                      {POPULAR_LOCATIONS.map((location) => (
-                        <Button
-                          key={location}
-                          variant="ghost"
-                          className="w-full justify-start text-sm h-8"
-                          onClick={() => {
-                            setDrop(location)
-                            setShowPopular(null)
-                          }}
+        {step === 'vehicle' && (
+          <motion.div
+            key="vehicle"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          >
+            <Card className="border-0 shadow-lg ring-1 ring-slate-100">
+              <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-4">
+                <CardTitle className="text-xl flex items-center justify-between">
+                  <span>Select Vehicle</span>
+                  {fareEstimate && (
+                    <div className="flex items-center gap-3 text-sm font-medium bg-white px-3 py-1 rounded-full shadow-sm border border-slate-100">
+                      <span className="flex items-center text-slate-600"><Navigation className="w-3.5 h-3.5 mr-1" />{fareEstimate.distance} km</span>
+                      <span className="flex items-center text-slate-600"><Clock className="w-3.5 h-3.5 mr-1" />{fareEstimate.duration} min</span>
+                    </div>
+                  )}
+                </CardTitle>
+              </CardHeader>
+              
+              <CardContent className="space-y-4 pt-4 bg-slate-50/30">
+                
+                {/* Vehicle List */}
+                <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1 pb-2 custom-scrollbar">
+                  {VEHICLE_OPTIONS.map((vehicle) => {
+                    const isSelected = selectedVehicle === vehicle.type;
+                    const isBus = vehicle.type === 'BUSES';
+                    
+                    return (
+                      <motion.div whileTap={{ scale: 0.98 }} key={vehicle.type}>
+                        <div
+                          className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                            isSelected 
+                              ? 'border-orange-500 bg-orange-50/50 shadow-md' 
+                              : 'border-slate-200 bg-white hover:border-orange-300 hover:shadow-sm'
+                          }`}
+                          onClick={() => setSelectedVehicle(vehicle.type)}
                         >
-                          <MapPin className="w-3 h-3 mr-2 text-slate-400" />
-                          {location}
-                        </Button>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              <div className="flex gap-2">
-                <Button
-                  variant={step === 'location' ? 'default' : 'outline'}
-                  className="flex-1"
-                  onClick={() => {}}
-                >
-                  <Car className="w-4 h-4 mr-2" />
-                  Ride Now
-                </Button>
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => {}}
-                >
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Schedule
-                </Button>
-              </div>
-
-              <Button
-                className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700"
-                disabled={!pickup || !drop || loading}
-                onClick={handleGetEstimate}
-              >
-                {loading ? 'Calculating...' : (
-                  <>
-                    <Search className="w-4 h-4 mr-2" />
-                    Get Fare Estimate
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
-
-      {step === 'vehicle' && (
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Select Vehicle</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-slate-50 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{pickup}</p>
-                  </div>
-                </div>
-                <div className="ml-2.5 border-l-2 border-dashed border-slate-300 h-4 my-1" />
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{drop}</p>
-                  </div>
-                </div>
-
-                {fareEstimate && (
-                  <div className="flex items-center gap-4 mt-4 pt-4 border-t border-slate-200">
-                    <div className="flex items-center gap-2">
-                      <Navigation className="w-4 h-4 text-slate-600" />
-                      <span className="text-sm font-medium">{fareEstimate.distance} km</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-slate-600" />
-                      <span className="text-sm font-medium">{fareEstimate.duration} min</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-3">
-                {VEHICLE_OPTIONS.map((vehicle) => (
-                  <div
-                    key={vehicle.type}
-                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all hover:border-orange-300 ${
-                      selectedVehicle === vehicle.type ? 'border-orange-500 bg-orange-50' : 'border-slate-200'
-                    }`}
-                    onClick={() => setSelectedVehicle(vehicle.type)}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="text-4xl">{vehicle.image}</div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-semibold">{vehicle.name}</h3>
-                            <Badge variant="outline" className="text-xs">
-                              <Car className="w-3 h-3 mr-1" />
-                              {vehicle.capacity} seats
-                            </Badge>
+                          {vehicle.popular && (
+                            <div className="absolute -top-2.5 left-4 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[9px] font-black px-2 py-0.5 rounded-sm shadow-sm tracking-wider">
+                              POPULAR
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                              <div className={`text-4xl w-14 h-14 flex items-center justify-center rounded-xl bg-slate-50 border ${isSelected ? 'border-orange-200' : 'border-slate-100'}`}>
+                                {vehicle.image}
+                              </div>
+                              <div>
+                                <h3 className="font-bold text-slate-800 text-lg leading-tight">{vehicle.name}</h3>
+                                <div className="flex items-center gap-3 text-xs text-slate-500 mt-1.5">
+                                  <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {vehicle.capacity}</span>
+                                  <span className="flex items-center gap-1"><Briefcase className="w-3.5 h-3.5" /> {vehicle.luggage}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              {isSelected && fareEstimate && !isBus ? (
+                                <p className="text-xl font-black text-orange-600">₹{Math.round(fareEstimate.totalAmount)}</p>
+                              ) : isBus && isSelected ? (
+                                <p className="text-sm font-bold text-orange-600">On Request</p>
+                              ) : (
+                                <p className="text-sm font-bold text-slate-400">{vehicle.price}</p>
+                              )}
+                            </div>
                           </div>
-                          <p className="text-sm text-slate-600">{vehicle.estimatedTime} away</p>
                         </div>
+                      </motion.div>
+                    )
+                  })}
+                </div>
+
+                {fareEstimate?.surgeMultiplier && fareEstimate.surgeMultiplier > 1 && selectedVehicle !== 'BUSES' && (
+                  <div className="bg-red-50 border border-red-100 text-red-700 p-3 rounded-xl text-sm flex items-center gap-2 shadow-sm">
+                    <span className="font-bold flex items-center"><TrendingUp className="w-4 h-4 mr-1"/> Surge:</span>
+                    <span className="font-medium">Fares are {Math.round((fareEstimate.surgeMultiplier - 1) * 100)}% higher due to demand</span>
+                  </div>
+                )}
+
+                <div className="flex gap-3 pt-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1 h-14 rounded-xl border-slate-200 hover:bg-slate-50 font-semibold"
+                    onClick={() => changeStep('location', -1)}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    className="flex-[2] h-14 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold shadow-lg shadow-green-500/25"
+                    disabled={loading}
+                    onClick={handleWhatsAppBooking}
+                  >
+                    <Phone className="w-5 h-5 mr-2" />
+                    Book via WhatsApp
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        {step === 'confirm' && (
+          <motion.div
+            key="confirm"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          >
+            <Card className="border-0 shadow-lg ring-1 ring-green-100 bg-gradient-to-b from-green-50/50 to-white">
+              <CardContent className="pt-10 pb-8 text-center px-6">
+                <motion.div 
+                  initial={{ scale: 0 }} 
+                  animate={{ scale: 1 }} 
+                  transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
+                  className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-500/30"
+                >
+                  <CheckCircle2 className="w-10 h-10 text-white" />
+                </motion.div>
+                
+                <h2 className="text-3xl font-black text-slate-800 mb-3">Request Sent!</h2>
+                <p className="text-slate-600 font-medium mb-8 max-w-sm mx-auto leading-relaxed">
+                  Your ride request has been securely sent to our dispatch team via WhatsApp. We will confirm your driver shortly.
+                </p>
+
+                {fareEstimate && selectedVehicle !== 'BUSES' && (
+                  <div className="bg-white rounded-2xl p-5 mb-8 text-left border border-slate-100 shadow-sm relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-green-500" />
+                    <h3 className="font-bold text-slate-800 mb-4 flex items-center"><IndianRupee className="w-4 h-4 mr-1 text-slate-400"/> Fare Breakdown</h3>
+                    <div className="space-y-2.5 text-sm">
+                      <div className="flex justify-between font-medium">
+                        <span className="text-slate-500">Base Fare</span>
+                        <span className="text-slate-800">₹{fareEstimate.breakdown.baseFare}</span>
                       </div>
-                      <div className="text-right">
-                        {fareEstimate && (
-                          <p className="text-xl font-bold text-orange-600">
-                            ₹{Math.round(fareEstimate.totalAmount)}
-                          </p>
-                        )}
-                        <p className="text-sm text-slate-600">{vehicle.price}</p>
+                      <div className="flex justify-between font-medium">
+                        <span className="text-slate-500">Distance ({fareEstimate.distance} km)</span>
+                        <span className="text-slate-800">₹{fareEstimate.breakdown.distanceCharge}</span>
+                      </div>
+                      <div className="flex justify-between font-medium">
+                        <span className="text-slate-500">Time ({fareEstimate.duration} min)</span>
+                        <span className="text-slate-800">₹{fareEstimate.breakdown.timeCharge}</span>
+                      </div>
+                      <div className="flex justify-between font-medium text-green-600 bg-green-50 p-1.5 rounded-md -mx-1.5 px-1.5">
+                        <span>Auto Discount</span>
+                        <span>-₹{fareEstimate.breakdown.discount}</span>
+                      </div>
+                      <Separator className="my-3" />
+                      <div className="flex justify-between font-black text-lg items-center">
+                        <span className="text-slate-800">Total</span>
+                        <span className="text-green-600 text-xl">₹{fareEstimate.totalAmount}</span>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
+                )}
 
-              {fareEstimate?.surgeMultiplier && fareEstimate.surgeMultiplier > 1 && (
-                <div className="bg-red-50 text-red-700 p-3 rounded-lg text-sm flex items-center gap-2">
-                  <span className="font-semibold">⚠️ Surge Pricing</span>
-                  <span>Fares are {Math.round((fareEstimate.surgeMultiplier - 1) * 100)}% higher due to high demand</span>
-                </div>
-              )}
-
-              <div className="flex gap-2">
                 <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => setStep('location')}
+                  className="w-full h-14 text-lg font-bold bg-slate-900 hover:bg-slate-800 text-white rounded-xl"
+                  onClick={() => {
+                    changeStep('location', -1)
+                    setPickup('')
+                    setDrop('')
+                    setFareEstimate(null)
+                  }}
                 >
-                  Back
+                  Book Another Ride
                 </Button>
-                <Button
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-                  disabled={loading}
-                  onClick={handleBookRide}
-                >
-                  {loading ? 'Booking...' : 'Book via WhatsApp'}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
-
-      {step === 'confirm' && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          <Card className="border-green-200 bg-green-50">
-            <CardContent className="pt-6 text-center">
-              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl text-white">✓</span>
-              </div>
-              <h2 className="text-2xl font-bold text-green-800 mb-2">Ride Booked!</h2>
-              <p className="text-green-700 mb-6">
-                Your ride request has been sent to WhatsApp successfully. Our team will assist you shortly.
-              </p>
-
-              {fareEstimate && (
-                <div className="bg-white rounded-lg p-4 mb-6 text-left">
-                  <h3 className="font-semibold mb-3">Booking Summary</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-slate-600">Base Fare</span>
-                      <span>₹{fareEstimate.breakdown.baseFare}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-600">Distance ({fareEstimate.distance} km)</span>
-                      <span>₹{fareEstimate.breakdown.distanceCharge}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-600">Time Charge ({fareEstimate.duration} min)</span>
-                      <span>₹{fareEstimate.breakdown.timeCharge}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-600">GST (18%)</span>
-                      <span>₹{fareEstimate.breakdown.gst}</span>
-                    </div>
-                    <div className="flex justify-between text-green-600 font-medium">
-                      <span>Special Discount</span>
-                      <span>-₹{fareEstimate.breakdown.discount}</span>
-                    </div>
-                    {fareEstimate.breakdown.surgeCharge > 0 && (
-                      <div className="flex justify-between text-red-600 mt-1">
-                        <span>Surge Charge</span>
-                        <span>+₹{fareEstimate.breakdown.surgeCharge}</span>
-                      </div>
-                    )}
-                    <Separator />
-                    <div className="flex justify-between font-bold text-lg">
-                      <span>Total</span>
-                      <span className="text-orange-600">₹{fareEstimate.totalAmount}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <Button
-                className="w-full bg-green-600 hover:bg-green-700"
-                onClick={() => {
-                  setStep('location')
-                  setPickup('')
-                  setDrop('')
-                  setFareEstimate(null)
-                }}
-              >
-                Book Another Ride
-              </Button>
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
