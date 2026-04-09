@@ -153,33 +153,65 @@ export default function FAQsPage() {
           ))}
         </div>
 
-        {/* Still Have Questions */}
-        <div className="max-w-4xl mx-auto mt-12">
-          <Card className="bg-gradient-to-br from-orange-600 to-red-600 text-white border-0">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Still Have Questions?</CardTitle>
-              <CardDescription className="text-white/90">
-                Our support team is here to help you with any queries
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col md:flex-row gap-4 justify-center">
-              <Button variant="secondary" size="lg" className="w-full md:w-auto">
-                Contact Support
-              </Button>
-              <Button variant="outline" size="lg" className="w-full md:w-auto bg-white/10 border-white/20 text-white hover:bg-white/20">
-                Call +91 98765 43210
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
+        {/* Quick Links */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Quick Help</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-4 gap-4">
+              <Link href="/book-ride">
+                <div className="flex items-center gap-2 p-3 rounded-lg hover:bg-slate-100 transition-colors">
+                  <Car className="w-5 h-5 text-orange-600" />
+                  <span className="text-sm font-medium">Book a Ride</span>
+                </div>
+              </Link>
+              <Link href="/rental-cars">
+                <div className="flex items-center gap-2 p-3 rounded-lg hover:bg-slate-100 transition-colors">
+                  <Calendar className="w-5 h-5 text-orange-600" />
+                  <span className="text-sm font-medium">Rent a Car</span>
+                </div>
+              </Link>
+              <Link href="/contact">
+                <div className="flex items-center gap-2 p-3 rounded-lg hover:bg-slate-100 transition-colors">
+                  <Shield className="w-5 h-5 text-orange-600" />
+                  <span className="text-sm font-medium">Contact Support</span>
+                </div>
+              </Link>
+              <Link href="/refund">
+                <div className="flex items-center gap-2 p-3 rounded-lg hover:bg-slate-100 transition-colors">
+                  <CreditCard className="w-5 h-5 text-orange-600" />
+                  <span className="text-sm font-medium">Refund Policy</span>
+                </div>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Footer */}
-      <footer className="bg-slate-900 text-white py-8 mt-auto">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-slate-400">© 2024 G7 Travels. All rights reserved.</p>
-        </div>
-      </footer>
+        {/* Still Have Questions */}
+        <Card className="bg-gradient-to-r from-orange-600 to-red-600 text-white border-0">
+          <CardContent className="pt-8 pb-8 text-center">
+            <h2 className="text-2xl font-bold mb-4">Still Have Questions?</h2>
+            <p className="opacity-90 mb-6 max-w-2xl mx-auto">
+              Our 24/7 support team is ready to help you with any queries. Don't hesitate to reach out!
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link href="/contact">
+                <Button size="lg" variant="secondary" className="bg-white text-orange-600 hover:bg-orange-50">
+                  <MapPin className="w-5 h-5 mr-2" />
+                  Contact Support
+                </Button>
+              </Link>
+              <a href="tel:+919014878313">
+                  <Button variant="outline" size="lg" className="w-full md:w-auto bg-white/10 border-white/20 text-white hover:bg-white/20">
+                  <Clock className="w-5 h-5 mr-2" />
+                  Call Now
+                </Button>
+              </a>
+            </div>
+          </CardContent>
+        </Card>
+      </main>
     </div>
   )
 }
