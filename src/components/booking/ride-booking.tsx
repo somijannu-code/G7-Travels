@@ -1,15 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { MapPin, Car, Clock, ArrowRight, Search, Navigation, Calendar, RotateCcw, IndianRupee, Phone, CheckCircle2, Users, Briefcase, Building2 } from 'lucide-react'
+import { MapPin, Car, Clock, ArrowRight, Search, Navigation, Calendar, RotateCcw, IndianRupee, Phone, CheckCircle2, Users, Briefcase, Gift } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import Link from 'next/link'
 
 interface FareEstimate {
   distance: number
@@ -198,24 +198,23 @@ Please confirm my ride. Thank you!`
                   </CardTitle>
                   
                   {/* NEW PACKAGES BUTTON */}
-                  <Link href="/pilgrimage-packages">
-                    <Button variant="outline" size="sm" className="hidden sm:flex border-orange-200 text-orange-700 hover:bg-orange-50">
-                      <Building2 className="w-4 h-4 mr-2 text-orange-500" />
-                      View Packages
-                    </Button>
+                  <Link href="/pilgrimage-packages" passHref>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="sm" 
+                        className="border-orange-200 text-orange-700 hover:bg-orange-50 bg-white shadow-sm font-bold"
+                      >
+                        <Gift className="w-4 h-4 mr-1.5 text-orange-500" />
+                        Packages
+                      </Button>
+                    </motion.div>
                   </Link>
+
                 </div>
               </CardHeader>
               <CardContent className="space-y-4 pt-6">
-                
-                {/* Mobile version of the packages button (shows only on small screens) */}
-                <Link href="/pilgrimage-packages" className="sm:hidden block mb-4">
-                  <Button variant="outline" className="w-full border-orange-200 text-orange-700 bg-orange-50/50 hover:bg-orange-50">
-                    <Building2 className="w-4 h-4 mr-2 text-orange-500" />
-                    View Pilgrimage Packages
-                  </Button>
-                </Link>
-
                 <div className="space-y-2 relative">
                   <Label htmlFor="pickup" className="font-semibold text-slate-700">Pickup Location</Label>
                   <div className="relative group">
@@ -326,16 +325,16 @@ Please confirm my ride. Thank you!`
                 </div>
 
                 <div className="flex gap-3 pt-4">
-                  <Button variant="default" className="flex-1 h-12 bg-slate-900 hover:bg-slate-800 text-white shadow-md">
+                  <Button variant="default" className="flex-1 h-12 bg-slate-900 hover:bg-slate-800 text-white shadow-md rounded-xl">
                     <Car className="w-4 h-4 mr-2" /> Ride Now
                   </Button>
-                  <Button variant="outline" className="flex-1 h-12 border-slate-200 hover:bg-slate-50 text-slate-700">
+                  <Button variant="outline" className="flex-1 h-12 border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl">
                     <Calendar className="w-4 h-4 mr-2" /> Schedule
                   </Button>
                 </div>
 
                 <Button
-                  className="w-full h-14 text-lg font-bold bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 shadow-lg shadow-orange-500/25 mt-2"
+                  className="w-full h-14 text-lg font-bold bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 shadow-lg shadow-orange-500/25 mt-2 rounded-xl"
                   disabled={!pickup || !drop || loading}
                   onClick={handleGetEstimate}
                 >
