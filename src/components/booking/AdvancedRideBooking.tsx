@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input'
 import { LocationAutocomplete } from '@/components/maps/LocationAutocomplete'
 import { cn } from '@/lib/utils'
 import { format, addDays } from 'date-fns'
-import { MapPin, Car, Clock, Route, IndianRupee, CheckCircle2, Loader2, Calendar as CalendarIcon, Plus, X, Star, Volume2, Snowflake, Phone, Navigation, Share2, Heart, Trash2, ChevronRight, Home, Briefcase, User, Wallet, Shield, CircleDot, Users } from 'lucide-react'
+import { MapPin, Car, Clock, Route, IndianRupee, CheckCircle2, Settings, Loader2, Calendar as CalendarIcon, Plus, X, Star, Volume2, Snowflake, Phone, Navigation, Share2, Heart, Trash2, ChevronRight, Home, Briefcase, User, Wallet, Shield, CircleDot, Users } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface FareEstimate {
