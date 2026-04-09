@@ -134,21 +134,16 @@ export default function SafetyPage() {
                   <p className="text-sm text-muted-foreground">24/7 Emergency Helpline</p>
                   <p className="text-2xl font-bold text-red-600">+91 90148 78313</p>
                 </div>
-                <Button variant="destructive" size="lg">
-                  Call Now
-                </Button>
+                {/* Wrapped the button in an anchor tag with the tel: protocol */}
+                <a href="tel:+919014878313">
+                  <Button variant="destructive" size="lg">
+                    Call Now
+                  </Button>
+                </a>
               </div>
             </CardContent>
           </Card>
         </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-slate-900 text-white py-8 mt-auto">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-slate-400">© 2024 G7 Travels. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   )
 }
