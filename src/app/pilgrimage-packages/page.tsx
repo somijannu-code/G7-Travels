@@ -11,7 +11,7 @@ export default function PilgrimagePackagesPage() {
   const packages = [
     {
       name: 'Airport - Tirumala Darshan (Direct)',
-      image: '/pkg-1.jpg', // Upload this image to your public folder
+      image: '/pkg-1.jpg', 
       duration: '1 Day',
       price: '3,500',
       rating: 4.9,
@@ -26,7 +26,7 @@ export default function PilgrimagePackagesPage() {
     },
     {
       name: 'Airport - Tirumala + Sightseeing',
-      image: '/pkg-2.jpg', // Upload this image to your public folder
+      image: '/pkg-2.jpg', 
       duration: '1 Day',
       price: '4,500',
       rating: 4.8,
@@ -41,7 +41,7 @@ export default function PilgrimagePackagesPage() {
     },
     {
       name: 'Local Temples Tour',
-      image: '/pkg-3.jpg', // Upload this image to your public folder
+      image: '/pkg-3.jpg', 
       duration: 'Half Day',
       price: '2,500',
       rating: 4.7,
@@ -56,7 +56,7 @@ export default function PilgrimagePackagesPage() {
     },
     {
       name: 'Tirupati to Kanipakam',
-      image: '/pkg-4.jpg', // Upload this image to your public folder
+      image: '/pkg-4.jpg', 
       duration: '1 Day',
       price: '3,500',
       rating: 4.9,
@@ -71,7 +71,7 @@ export default function PilgrimagePackagesPage() {
     },
     {
       name: 'Tirupati to Srikalahasti',
-      image: '/pkg-5.jpg', // Upload this image to your public folder
+      image: '/pkg-5.jpg', 
       duration: 'Half Day',
       price: '2,500',
       rating: 4.8,
@@ -86,7 +86,7 @@ export default function PilgrimagePackagesPage() {
     },
     {
       name: 'Kanipakam & Golden Temple',
-      image: '/pkg-6.jpg', // Upload this image to your public folder
+      image: '/pkg-6.jpg', 
       duration: '1 Day',
       price: '5,000',
       rating: 4.9,
@@ -101,7 +101,7 @@ export default function PilgrimagePackagesPage() {
     },
     {
       name: 'Kanipakam, Golden Temple & Arunachalam',
-      image: '/pkg-7.jpg', // Upload this image to your public folder
+      image: '/pkg-7.jpg', 
       duration: '1-2 Days',
       price: '6,500',
       rating: 4.9,
@@ -117,7 +117,7 @@ export default function PilgrimagePackagesPage() {
     },
     {
       name: 'Mega Round Trip (2 Days)',
-      image: '/pkg-8.jpg', // Upload this image to your public folder
+      image: '/pkg-8.jpg', 
       duration: '2 Days',
       price: '11,000',
       rating: 5.0,
@@ -134,7 +134,7 @@ export default function PilgrimagePackagesPage() {
     },
     {
       name: 'Tirupati to Chennai Drop',
-      image: '/pkg-9.jpg', // Upload this image to your public folder
+      image: '/pkg-9.jpg', 
       duration: 'One Way',
       price: '5,500',
       rating: 4.7,
@@ -149,7 +149,7 @@ export default function PilgrimagePackagesPage() {
     },
     {
       name: 'Tirupati to Bangalore Drop',
-      image: '/pkg-10.jpg', // Upload this image to your public folder
+      image: '/pkg-10.jpg', 
       duration: 'One Way',
       price: '7,000',
       rating: 4.8,
@@ -173,14 +173,22 @@ export default function PilgrimagePackagesPage() {
     'Flexible pickup timings'
   ]
 
-  const handleWhatsAppBooking = (pkgName: string, pkgPrice: string) => {
-    const message = `*🚕 Package Enquiry | G7 TRAVELS*
+  const handleWhatsAppBooking = (pkg: any) => {
+    const highlightsText = pkg.highlights.map((h: string) => `  - ${h}`).join('\n')
+    
+    const message = `*🚕 Package Booking Request | G7 TRAVELS*
     
 I am interested in booking the following package:
-*Package:* ${pkgName}
-*Price:* ₹${pkgPrice}
 
-Please provide more details regarding availability and booking.`
+*Package Name:* ${pkg.name}
+*Price:* ₹${pkg.price}
+*Duration:* ${pkg.duration}
+*Capacity:* ${pkg.capacity}
+
+*Highlights included:*
+${highlightsText}
+
+Please provide more details regarding availability and next steps.`
 
     const whatsappUrl = `https://wa.me/919014878313?text=${encodeURIComponent(message)}`
     window.open(whatsappUrl, '_blank')
@@ -203,12 +211,10 @@ Please provide more details regarding availability and booking.`
       <div className="grid md:grid-cols-2 gap-8 mb-12">
         {packages.map((pkg, index) => (
           <Card key={index} className="overflow-hidden hover:shadow-xl transition-shadow border-2 border-slate-100 hover:border-orange-200">
-            {/* Changed bg-slate-200 to bg-white to ensure a clean background for uncropped images */}
             <div className="relative h-64 bg-white flex items-center justify-center p-4 border-b border-slate-100">
               <img
                 src={pkg.image}
                 alt={pkg.name}
-                // Changed object-cover to object-contain so it doesn't crop
                 className="w-full h-full object-contain"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&q=80' // Fallback temple image
@@ -266,7 +272,7 @@ Please provide more details regarding availability and booking.`
                 </div>
                 <Button 
                   className="bg-green-600 hover:bg-green-700 text-white shadow-md hover:shadow-lg transition-all"
-                  onClick={() => handleWhatsAppBooking(pkg.name, pkg.price)}
+                  onClick={() => handleWhatsAppBooking(pkg)}
                 >
                   <Phone className="w-4 h-4 mr-2" />
                   Book via WhatsApp
@@ -293,7 +299,6 @@ Please provide more details regarding availability and booking.`
       {/* Why Choose Us */}
       <div className="max-w-4xl mx-auto mb-8">
         <Card className="bg-gradient-to-br from-orange-600 to-red-600 text-white border-0 shadow-xl overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/tirupati-god.png')] bg-cover bg-center opacity-10 mix-blend-overlay" />
           <CardHeader className="relative z-10 pb-2">
             <CardTitle className="text-3xl text-center font-bold">Why Choose G7 Travels?</CardTitle>
           </CardHeader>
