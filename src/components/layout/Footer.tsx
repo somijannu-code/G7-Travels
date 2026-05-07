@@ -67,7 +67,7 @@ export function Footer() {
                 <Phone className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <div>
                   <div className="text-white">24/7 Support</div>
-                  <div>+91 90148 78313</div>
+                  <div>+91 98661 43321</div>
                 </div>
               </li>
               <li className="flex items-start gap-3">
