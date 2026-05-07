@@ -448,11 +448,6 @@ Please confirm my booking. Thank you! ✅`
                         </div>
                       </div>
                       <div className="flex gap-1">
-                        <Button type="button" variant="secondary" size="sm" onClick={() => handleSelectFavorite(fav, true)} title="Set as Pickup">
-                          <CircleDot className="h-3 w-3 text-green-600" />
-                        </Button>
-                        <Button type="button" variant="secondary" size="sm" onClick={() => handleSelectFavorite(fav, false)} title="Set as Drop">
-                          <MapPin className="h-3 w-3 text-red-600" />
                         </Button>
                       </div>
                     </div>
