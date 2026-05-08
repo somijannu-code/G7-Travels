@@ -1,11 +1,11 @@
 'use client'
 
-import { Phone, MessageCircle } from 'lucide-react'
+import { Phone } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
 export function FloatingContact() {
-  const phoneNumber = '+919014878313' // Replaced with your business number
+  const phoneNumber = '+919014878313'
   const whatsappUrl = `https://wa.me/919014878313?text=${encodeURIComponent("Hi G7 Travels, I would like to inquire about a ride.")}`
 
   return (
@@ -22,10 +22,14 @@ export function FloatingContact() {
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-lg hover:bg-[#20bd5a] transition-colors shadow-black/20"
+          className="flex items-center justify-center w-14 h-14 bg-white rounded-full shadow-lg hover:bg-slate-50 transition-colors shadow-black/20 overflow-hidden p-1 border-2 border-transparent hover:border-green-500"
           aria-label="Contact on WhatsApp"
         >
-          <MessageCircle className="w-7 h-7" />
+          <img 
+            src="https://png.pngtree.com/png-clipart/20190516/original/pngtree-whatsapp-icon-png-image_3584845.jpg" 
+            alt="WhatsApp" 
+            className="w-full h-full object-cover rounded-full"
+          />
         </Link>
       </motion.div>
 
