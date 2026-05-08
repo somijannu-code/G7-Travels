@@ -5,8 +5,8 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 
 export function FloatingContact() {
-  const phoneNumber = '+919014878313'
-  const whatsappUrl = `https://wa.me/919014878313?text=${encodeURIComponent("Hi G7 Travels, I would like to inquire about a ride.")}`
+  const phoneNumber = '+919866143321'
+  const whatsappUrl = `https://wa.me/919866143321?text=${encodeURIComponent("Hi G7 Travels, I would like to inquire about a ride.")}`
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-4">
