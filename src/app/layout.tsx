@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { FloatingContact } from "@/components/layout/FloatingContact"; // Added import
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,6 +55,9 @@ export default function RootLayout({
           </main>
           <Footer />
         </div>
+        
+        {/* Global Floating Components */}
+        <FloatingContact />
         <Toaster />
       </body>
     </html>
