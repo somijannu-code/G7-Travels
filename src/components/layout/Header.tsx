@@ -1,14 +1,27 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Bell, LogIn, Menu, X } from 'lucide-react'
+import { Bell, LogIn, Menu, X, ShieldAlert } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
+  const [showFraudStrip, setShowFraudStrip] = useState(false)
+
+  useEffect(() => {
+    const isDismissed = sessionStorage.getItem('g7_fraud_strip_dismissed')
+    if (!isDismissed) {
+      setShowFraudStrip(true)
+    }
+  }, [])
+
+  const handleDismissStrip = () => {
+    sessionStorage.setItem('g7_fraud_strip_dismissed', 'true')
+    setShowFraudStrip(false)
+  }
 
   const notifications = [
     { id: 1, title: 'New promo available!', message: 'Use WELCOME10 for 10% off', time: '2 min ago', unread: true },
@@ -18,6 +31,35 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+      
+      {/* Dismissible Fraud Warning Banner */}
+      <AnimatePresence>
+        {showFraudStrip && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="bg-gradient-to-r from-orange-600 via-orange-500 to-red-600 text-white text-xs font-semibold border-b border-orange-500/20"
+          >
+            <div className="container mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 flex-grow justify-center text-center">
+                <ShieldAlert className="h-4 w-4 text-orange-100 animate-pulse flex-shrink-0" />
+                <span className="leading-relaxed">
+                  <strong>Fraud Alert:</strong> Beware of fake online agents selling fake Tirumala Darshan tickets using G7 Travels' branding. We only provide authorized private transport services. Verify before making any payment.
+                </span>
+              </div>
+              <button 
+                onClick={handleDismissStrip}
+                className="text-white hover:text-orange-200 transition-colors p-1 rounded-full hover:bg-white/10 flex-shrink-0"
+                aria-label="Dismiss fraud alert"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         
         {/* Wrapped Logo and Title in a Link */}
