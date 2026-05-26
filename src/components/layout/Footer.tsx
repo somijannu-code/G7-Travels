@@ -46,6 +46,7 @@ export function Footer() {
               <li><Link href="/pilgrimage-packages" className="hover:text-orange-400 transition-colors">Pilgrimage Packages</Link></li>
               <li><Link href="/airport-transfers" className="hover:text-orange-400 transition-colors">Airport Transfers</Link></li>
               <li><Link href="/outstation" className="hover:text-orange-400 transition-colors">Outstation</Link></li>
+              <li><Link href="/darshan-guide" className="hover:text-orange-400 transition-colors">Tirumala Darshan Guide</Link></li>
             </ul>
           </div>
 

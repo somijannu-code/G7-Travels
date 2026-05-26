@@ -49,6 +49,9 @@ export function Header() {
           <Link href="/services" className="text-sm font-medium text-foreground/80 hover:text-orange-600 transition-colors">
             Services
           </Link>
+          <Link href="/darshan-guide" className="text-sm font-medium text-foreground/80 hover:text-orange-600 transition-colors">
+            Darshan Guide
+          </Link>
           <Link href="/about" className="text-sm font-medium text-foreground/80 hover:text-orange-600 transition-colors">
             About Us
           </Link>
@@ -143,6 +146,7 @@ export function Header() {
               <Link href="/book-ride" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Book Ride</Link>
               <Link href="/rental-cars" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Rental Cars</Link>
               <Link href="/services" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Services</Link>
+              <Link href="/darshan-guide" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Darshan Guide</Link>
               <Link href="/about" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>About Us</Link>
               <div className="h-px bg-border my-2" />
               <Link href="/auth/register" onClick={() => setMobileMenuOpen(false)}>

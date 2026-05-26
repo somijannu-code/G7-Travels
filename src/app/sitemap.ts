@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/services',
     '/about',
     '/contact',
+    '/darshan-guide',
     '/faqs',
     '/safety',
     '/partner',
