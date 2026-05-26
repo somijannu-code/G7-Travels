@@ -16,7 +16,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/darshan-guide',
     '/faqs',
     '/safety',
-    '/partner',
     '/partner-with-us',
     '/privacy',
     '/terms',
