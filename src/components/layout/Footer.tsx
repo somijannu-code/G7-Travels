@@ -49,6 +49,10 @@ export function Footer() {
               <li><Link href="/darshan-guide" className="hover:text-orange-400 transition-colors">Tirumala Darshan Guide</Link></li>
               <li><Link href="/tirupati-places" className="hover:text-orange-400 transition-colors">Tirupati Tourist Places</Link></li>
               <li><Link href="/travel-guide" className="hover:text-orange-400 transition-colors">Stay & Travel Guide</Link></li>
+              <li><Link href="/footpath-guide" className="hover:text-orange-400 transition-colors">Tirumala Footpath Guide</Link></li>
+              <li><Link href="/talakona-guide" className="hover:text-orange-400 transition-colors">Talakona Ecotourism</Link></li>
+              <li><Link href="/srikalahasti-guide" className="hover:text-orange-400 transition-colors">Srikalahasti Pooja Guide</Link></li>
+              <li><Link href="/temple-combo-guide" className="hover:text-orange-400 transition-colors">Kanipakam & Vellore Tour</Link></li>
             </ul>
           </div>
 

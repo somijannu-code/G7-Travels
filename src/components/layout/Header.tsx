@@ -100,7 +100,7 @@ export function Header() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-            <div className="absolute left-0 mt-0 w-60 bg-white border border-slate-200/80 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            <div className="absolute left-0 mt-0 w-64 bg-white border border-slate-200/80 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
               <div className="p-1.5 flex flex-col gap-0.5">
                 <Link href="/darshan-guide" className="px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-orange-500/10 hover:text-orange-600 rounded-lg transition-all">
                   Tirumala Darshan & Temple Guide
@@ -110,6 +110,18 @@ export function Header() {
                 </Link>
                 <Link href="/travel-guide" className="px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-orange-500/10 hover:text-orange-600 rounded-lg transition-all">
                   Stay Areas & Local Transit Tips
+                </Link>
+                <Link href="/footpath-guide" className="px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-orange-500/10 hover:text-orange-600 rounded-lg transition-all border-t border-slate-100 mt-0.5 pt-2">
+                  Tirumala Footpath Walking Guide
+                </Link>
+                <Link href="/talakona-guide" className="px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-orange-500/10 hover:text-orange-600 rounded-lg transition-all">
+                  Talakona Waterfalls Ecotourism
+                </Link>
+                <Link href="/srikalahasti-guide" className="px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-orange-500/10 hover:text-orange-600 rounded-lg transition-all">
+                  Srikalahasti Rahu-Ketu Pooja
+                </Link>
+                <Link href="/temple-combo-guide" className="px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-orange-500/10 hover:text-orange-600 rounded-lg transition-all">
+                  Kanipakam & Vellore Combo Tour
                 </Link>
               </div>
             </div>
@@ -215,6 +227,10 @@ export function Header() {
                 <Link href="/darshan-guide" className="text-sm font-semibold py-1 text-slate-700 hover:text-orange-600" onClick={() => setMobileMenuOpen(false)}>Tirumala Darshan Guide</Link>
                 <Link href="/tirupati-places" className="text-sm font-semibold py-1 text-slate-700 hover:text-orange-600" onClick={() => setMobileMenuOpen(false)}>Tourist Places Guide</Link>
                 <Link href="/travel-guide" className="text-sm font-semibold py-1 text-slate-700 hover:text-orange-600" onClick={() => setMobileMenuOpen(false)}>Stay & Transit Guide</Link>
+                <Link href="/footpath-guide" className="text-xs font-semibold py-1 text-slate-500 hover:text-orange-600 pl-2 border-l border-slate-100" onClick={() => setMobileMenuOpen(false)}>• Tirumala Footpath Guide</Link>
+                <Link href="/talakona-guide" className="text-xs font-semibold py-1 text-slate-500 hover:text-orange-600 pl-2 border-l border-slate-100" onClick={() => setMobileMenuOpen(false)}>• Talakona Ecotourism</Link>
+                <Link href="/srikalahasti-guide" className="text-xs font-semibold py-1 text-slate-500 hover:text-orange-600 pl-2 border-l border-slate-100" onClick={() => setMobileMenuOpen(false)}>• Srikalahasti Pooja Guide</Link>
+                <Link href="/temple-combo-guide" className="text-xs font-semibold py-1 text-slate-500 hover:text-orange-600 pl-2 border-l border-slate-100" onClick={() => setMobileMenuOpen(false)}>• Kanipakam & Vellore Combo</Link>
               </div>
               <div className="h-px bg-slate-100 my-1" />
               <Link href="/about" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>About Us</Link>
