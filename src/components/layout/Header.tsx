@@ -28,9 +28,9 @@ export function Header() {
             className="w-18 h-18 object-contain" 
           />
           <div>
-            <h1 className="text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent block">
               G7 Travels
-            </h1>
+            </span>
             <p className="text-xs text-muted-foreground hidden sm:block">Tirupati's Trusted Travel Partner</p>
           </div>
         </Link>

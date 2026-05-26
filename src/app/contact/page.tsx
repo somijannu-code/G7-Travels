@@ -35,14 +35,14 @@ export default function ContactPage() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <h1 className="text-xl font-bold">Contact Us</h1>
+          <span className="text-xl font-bold">Contact Us</span>
         </div>
       </header>
 
       <main className="flex-1 container mx-auto px-4 py-8">
         {/* Hero */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">Get in Touch</h2>
+          <h1 className="text-4xl font-bold mb-4">Contact G7 Travels Tirupati Cab Service</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Have questions or feedback? We'd love to hear from you. Reach out to us through any of the channels below.
           </p>

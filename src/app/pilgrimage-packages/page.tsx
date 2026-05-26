@@ -200,7 +200,7 @@ Please provide more details regarding availability and next steps.`
       <div className="text-center mb-12">
         <div className="flex items-center justify-center gap-2 mb-4">
           <Building2 className="w-8 h-8 text-orange-600" />
-          <h2 className="text-4xl font-bold text-slate-800">Sacred Pilgrimage Packages</h2>
+          <h1 className="text-4xl font-bold text-slate-800">Tirupati Pilgrimage Packages & Temple Tours</h1>
         </div>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Experience the divine journey to Tirumala and other sacred temples with our specially curated, fixed-price pilgrimage packages

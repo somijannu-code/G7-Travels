@@ -110,14 +110,14 @@ export default function RentalCarsPage() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <h1 className="text-xl font-bold">Rental Cars</h1>
+          <span className="text-xl font-bold">Rental Cars</span>
         </div>
       </header>
 
       <main className="flex-1 container mx-auto px-4 py-8">
         {/* Hero */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">Rent a Car in Tirupati</h2>
+          <h1 className="text-4xl font-bold mb-4">Best Car Rental in Tirupati with Driver</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Choose from our wide range of well-maintained vehicles for your travel needs. Self-drive or chauffeur-driven options available.
           </p>

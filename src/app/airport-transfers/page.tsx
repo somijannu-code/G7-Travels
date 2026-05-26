@@ -70,7 +70,7 @@ export default function AirportTransfersPage() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <h1 className="text-xl font-bold">Airport Transfers</h1>
+          <span className="text-xl font-bold">Airport Transfers</span>
         </div>
       </header>
 
@@ -79,7 +79,7 @@ export default function AirportTransfersPage() {
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Plane className="w-8 h-8 text-orange-600" />
-            <h2 className="text-4xl font-bold">Airport Transfer Services</h2>
+            <h1 className="text-4xl font-bold">Tirupati Renigunta Airport Taxi Booking</h1>
           </div>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Reliable and comfortable airport transfers to and from Renigunta Airport (TIR). Never miss a flight with our on-time guarantee.

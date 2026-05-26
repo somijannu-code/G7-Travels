@@ -14,8 +14,32 @@ import { RideTracking } from '@/components/booking/RideTracking'
 import { RideHistory } from '@/components/booking/RideHistory'
 import { VehicleComparison } from '@/components/booking/VehicleComparison'
 
+const faqs = [
+  {
+    q: "What is the best way to travel from Tirupati to Tirumala?",
+    a: "Booking a private taxi with G7 Travels is the most convenient and comfortable way to travel from Tirupati to Tirumala. Our professional drivers are expert hill-route navigators and are fully aware of all security check procedures and TTD guidelines."
+  },
+  {
+    q: "How much does a taxi from Renigunta Airport (TIR) to Tirupati cost?",
+    a: "We offer fixed, transparent pricing starting at just ₹800 for direct transfers between Renigunta Airport (TIR) and Tirupati City. For Tirumala drops, our fixed rate is ₹1,800, which includes all hill route expertise and clean vehicles."
+  },
+  {
+    q: "Do you provide car rental with a driver in Tirupati?",
+    a: "Yes, we specialize in both chauffeur-driven and self-drive car rentals in Tirupati. You can hire sedans, SUVs like Ertiga and Innova Crysta, or Tempo Travellers for larger family groups at very affordable per-day or per-kilometer rates."
+  },
+  {
+    q: "Can I book outstation cabs from Tirupati to Chennai or Bangalore?",
+    a: "Absolutely! We provide premium outstation taxi services from Tirupati to major nearby cities including Chennai (₹4,500 one-way), Bangalore (₹8,000 one-way), Hyderabad, and Vellore. Both one-way drops and round-trips are available."
+  },
+  {
+    q: "Are there customized local temple tour packages available?",
+    a: "Yes, G7 Travels provides dedicated pilgrimage packages covering local temples like Padmavathi Temple, Govindaraja Swamy Temple, Kanipakam Varasiddhi Vinayaka Temple, and Srikalahasti Shiva Temple. You can view these under our Pilgrimage Packages section."
+  }
+];
+
 export default function G7TravelsPage() {
   const [activeTab, setActiveTab] = useState('book')
+  const [openFaq, setOpenFaq] = useState<number | null>(null)
 
   const features = [
     {
@@ -93,12 +117,12 @@ export default function G7TravelsPage() {
                 <MapPin className="w-3 h-3 mr-1" />
                 Serving Tirupati & Surrounding Areas
               </Badge>
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                Your Trusted Travel Partner in{' '}
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                Best Car Rental &{' '}
                 <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-                  Tirupati
+                  Taxi Service in Tirupati
                 </span>
-              </h2>
+              </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Book rides with advanced features including scheduling, multiple stops, real-time tracking, and more!
               </p>
@@ -326,6 +350,71 @@ export default function G7TravelsPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="relative py-16 bg-white z-10">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center mb-12">
+            <Badge className="mb-3 bg-orange-100 text-orange-700 hover:bg-orange-200">
+              FAQs
+            </Badge>
+            <h3 className="text-3xl font-bold mb-4">Tirupati Travel FAQ</h3>
+            <p className="text-muted-foreground">
+              Everything you need to know about booking cabs, car rentals, and temple tours in Tirupati
+            </p>
+          </div>
+          
+          <div className="space-y-4">
+            {faqs.map((faq, index) => {
+              const isOpen = openFaq === index;
+              return (
+                <div 
+                  key={index} 
+                  className="border-2 rounded-xl overflow-hidden transition-all duration-300"
+                  style={{
+                    borderColor: isOpen ? 'rgb(254 215 170)' : 'rgb(241 245 249)',
+                    boxShadow: isOpen ? '0 10px 15px -3px rgb(0 0 0 / 0.05)' : 'none'
+                  }}
+                >
+                  <button
+                    className="w-full text-left px-6 py-4 flex items-center justify-between bg-slate-50/50 hover:bg-slate-50 transition-colors"
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                  >
+                    <span className="font-semibold text-slate-800 text-base md:text-lg">{faq.q}</span>
+                    <span className={`text-orange-500 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+                      ▼
+                    </span>
+                  </button>
+                  {isOpen && (
+                    <div className="px-6 py-4 bg-white text-slate-600 text-sm md:text-base border-t border-slate-100 leading-relaxed">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        
+        {/* Dynamic FAQPage JSON-LD schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": faqs.map(faq => ({
+                "@type": "Question",
+                "name": faq.q,
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": faq.a
+                }
+              }))
+            })
+          }}
+        />
       </section>
 
       {/* CTA Section */}

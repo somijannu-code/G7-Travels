@@ -71,14 +71,14 @@ export default function OutstationPage() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <h1 className="text-xl font-bold">Outstation Travel</h1>
+          <span className="text-xl font-bold">Outstation Travel</span>
         </div>
       </header>
 
       <main className="flex-1 container mx-auto px-4 py-8">
         {/* Hero */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">Outstation Travel from Tirupati</h2>
+          <h1 className="text-4xl font-bold mb-4">Outstation Cab Booking from Tirupati</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Explore destinations across Andhra Pradesh and neighboring states with our reliable outstation taxi service
           </p>

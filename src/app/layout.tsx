@@ -17,25 +17,107 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "G7 Travels | Tirupati's Trusted Travel Partner",
-  description: "Your reliable travel partner for on-demand rides, car rentals, and pilgrimage packages in Tirupati and surrounding areas.",
-  keywords: ["G7 Travels", "Tirupati taxi", "car rental Tirupati", "cab booking Tirupati", "Tirumala travel", "airport transfers Tirupati"],
+  title: "G7 Travels | Best Car Rental & Taxi Service in Tirupati",
+  description: "Book the best taxi service and car rental in Tirupati with G7 Travels. Safe, reliable local & outstation cabs, Tirupati airport transfers, and customized Tirumala temple tour packages at budget-friendly rates with expert drivers.",
+  keywords: [
+    "Tirupati taxi service", 
+    "car rental Tirupati", 
+    "best taxi service in Tirupati", 
+    "Tirumala darshan travel package", 
+    "Tirupati airport taxi", 
+    "Renigunta airport cab", 
+    "Tirupati outstation cabs", 
+    "car rent in Tirupati with driver", 
+    "Tirupati local cabs", 
+    "Tirupati to Tirumala car rental", 
+    "G7 Travels",
+    "Tirupati tour packages"
+  ],
   authors: [{ name: "G7 Travels" }],
   icons: {
     icon: "/g7travels.png",
   },
   openGraph: {
-    title: "G7 Travels | Tirupati's Trusted Travel Partner",
-    description: "Book safe and secure rides, rental cars, and outstation trips in Tirupati with G7 Travels.",
+    title: "G7 Travels | Best Car Rental & Taxi Service in Tirupati",
+    description: "Book safe and secure rides, rental cars, outstation cabs, and customized Tirumala pilgrimage packages in Tirupati with G7 Travels.",
     url: "https://g7travels.in", 
     siteName: "G7 Travels",
     type: "website",
+    images: [
+      {
+        url: "https://g7travels.in/g7travels.png",
+        width: 800,
+        height: 800,
+        alt: "G7 Travels Logo"
+      }
+    ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "G7 Travels | Tirupati's Trusted Travel Partner",
-    description: "Book safe and secure rides, rental cars, and outstation trips in Tirupati with G7 Travels.",
+    title: "G7 Travels | Best Car Rental & Taxi Service in Tirupati",
+    description: "Book safe and secure rides, rental cars, outstation cabs, and customized Tirumala pilgrimage packages in Tirupati with G7 Travels.",
+    images: ["https://g7travels.in/g7travels.png"],
   },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "TaxiService",
+  "name": "G7 Travels",
+  "image": "https://g7travels.in/g7travels.png",
+  "@id": "https://g7travels.in/#taxiservice",
+  "url": "https://g7travels.in",
+  "telephone": "+919866143321",
+  "priceRange": "INR",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "123 Tirumala Road",
+    "addressLocality": "Tirupati",
+    "addressRegion": "Andhra Pradesh",
+    "postalCode": "517501",
+    "addressCountry": "IN"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 13.6288,
+    "longitude": 79.4192
+  },
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ],
+    "opens": "00:00",
+    "closes": "23:59"
+  },
+  "areaServed": [
+    {
+      "@type": "AdministrativeArea",
+      "name": "Tirupati"
+    },
+    {
+      "@type": "AdministrativeArea",
+      "name": "Tirumala"
+    },
+    {
+      "@type": "AdministrativeArea",
+      "name": "Renigunta"
+    },
+    {
+      "@type": "AdministrativeArea",
+      "name": "Srikalahasti"
+    },
+    {
+      "@type": "AdministrativeArea",
+      "name": "Chandragiri"
+    }
+  ]
 };
 
 export default function RootLayout({
@@ -45,6 +127,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased text-foreground bg-slate-50`}
       >
