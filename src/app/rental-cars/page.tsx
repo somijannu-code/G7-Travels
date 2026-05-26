@@ -101,20 +101,14 @@ export default function RentalCarsPage() {
   ]
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 to-orange-50">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur">
-        <div className="container mx-auto px-4 h-16 flex items-center gap-4">
-          <Link href="/">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
-          <span className="text-xl font-bold">Rental Cars</span>
+    <div className="bg-slate-50 pb-16 min-h-screen">
+      <div className="container mx-auto px-4 py-6">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
+          <Link href="/" className="hover:text-orange-600 transition-colors font-medium">Home</Link>
+          <span>/</span>
+          <span className="text-slate-900 font-semibold">Rental Cars</span>
         </div>
-      </header>
-
-      <main className="flex-1 container mx-auto px-4 py-8">
         {/* Hero */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Best Car Rental in Tirupati with Driver</h1>
@@ -230,14 +224,7 @@ export default function RentalCarsPage() {
             </CardContent>
           </Card>
         </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-slate-900 text-white py-8 mt-auto">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-slate-400">© 2024 G7 Travels. All rights reserved.</p>
-        </div>
-      </footer>
+      </div>
     </div>
   )
 }

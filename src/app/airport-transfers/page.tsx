@@ -61,20 +61,14 @@ export default function AirportTransfersPage() {
   ]
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 to-orange-50">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur">
-        <div className="container mx-auto px-4 h-16 flex items-center gap-4">
-          <Link href="/">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
-          <span className="text-xl font-bold">Airport Transfers</span>
+    <div className="bg-slate-50 pb-16 min-h-screen">
+      <div className="container mx-auto px-4 py-6">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
+          <Link href="/" className="hover:text-orange-600 transition-colors font-medium">Home</Link>
+          <span>/</span>
+          <span className="text-slate-900 font-semibold">Airport Transfers</span>
         </div>
-      </header>
-
-      <main className="flex-1 container mx-auto px-4 py-8">
         {/* Hero */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-2 mb-4">
@@ -210,14 +204,7 @@ export default function AirportTransfersPage() {
             </div>
           </div>
         </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-slate-900 text-white py-8 mt-auto">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-slate-400">© 2024 G7 Travels. All rights reserved.</p>
-        </div>
-      </footer>
+      </div>
     </div>
   )
 }
