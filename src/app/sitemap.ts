@@ -14,6 +14,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/about',
     '/contact',
     '/darshan-guide',
+    '/tirupati-places',
+    '/travel-guide',
     '/faqs',
     '/safety',
     '/partner-with-us',
