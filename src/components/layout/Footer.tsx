@@ -53,6 +53,8 @@ export function Footer() {
               <li><Link href="/talakona-guide" className="hover:text-orange-400 transition-colors">Talakona Ecotourism</Link></li>
               <li><Link href="/srikalahasti-guide" className="hover:text-orange-400 transition-colors">Srikalahasti Pooja Guide</Link></li>
               <li><Link href="/temple-combo-guide" className="hover:text-orange-400 transition-colors">Kanipakam & Vellore Tour</Link></li>
+              <li><Link href="/local-temples-guide" className="hover:text-orange-400 transition-colors">Local Temples Tour</Link></li>
+              <li><Link href="/chandragiri-guide" className="hover:text-orange-400 transition-colors">Chandragiri Fort Guide</Link></li>
             </ul>
           </div>
 

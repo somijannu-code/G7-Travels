@@ -20,6 +20,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/talakona-guide',
     '/srikalahasti-guide',
     '/temple-combo-guide',
+    '/local-temples-guide',
+    '/chandragiri-guide',
     '/faqs',
     '/safety',
     '/partner-with-us',

@@ -123,6 +123,12 @@ export function Header() {
                 <Link href="/temple-combo-guide" className="px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-orange-500/10 hover:text-orange-600 rounded-lg transition-all">
                   Kanipakam & Vellore Combo Tour
                 </Link>
+                <Link href="/local-temples-guide" className="px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-orange-500/10 hover:text-orange-600 rounded-lg transition-all border-t border-slate-100 mt-0.5 pt-2">
+                  Tirupati Local Temples Tour
+                </Link>
+                <Link href="/chandragiri-guide" className="px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-orange-500/10 hover:text-orange-600 rounded-lg transition-all">
+                  Chandragiri Fort Heritage
+                </Link>
               </div>
             </div>
           </div>
@@ -231,6 +237,8 @@ export function Header() {
                 <Link href="/talakona-guide" className="text-xs font-semibold py-1 text-slate-500 hover:text-orange-600 pl-2 border-l border-slate-100" onClick={() => setMobileMenuOpen(false)}>• Talakona Ecotourism</Link>
                 <Link href="/srikalahasti-guide" className="text-xs font-semibold py-1 text-slate-500 hover:text-orange-600 pl-2 border-l border-slate-100" onClick={() => setMobileMenuOpen(false)}>• Srikalahasti Pooja Guide</Link>
                 <Link href="/temple-combo-guide" className="text-xs font-semibold py-1 text-slate-500 hover:text-orange-600 pl-2 border-l border-slate-100" onClick={() => setMobileMenuOpen(false)}>• Kanipakam & Vellore Combo</Link>
+                <Link href="/local-temples-guide" className="text-xs font-semibold py-1 text-slate-500 hover:text-orange-600 pl-2 border-l border-slate-100" onClick={() => setMobileMenuOpen(false)}>• Local Temples Tour</Link>
+                <Link href="/chandragiri-guide" className="text-xs font-semibold py-1 text-slate-500 hover:text-orange-600 pl-2 border-l border-slate-100" onClick={() => setMobileMenuOpen(false)}>• Chandragiri Fort Heritage</Link>
               </div>
               <div className="h-px bg-slate-100 my-1" />
               <Link href="/about" className="text-sm font-medium py-2" onClick={() => setMobileMenuOpen(false)}>About Us</Link>
