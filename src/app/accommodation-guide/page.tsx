@@ -88,6 +88,21 @@ export default function AccommodationGuidePage() {
         </div>
       </section>
 
+      {/* Scenic Location Image Banner */}
+      <section className="container mx-auto max-w-6xl px-4 mt-8">
+        <div className="rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-white">
+          <img 
+            src="/tirumala-accommodation.png" 
+            alt="Scenic TTD guest houses and stone cottages at Tirumala hilltop surrounded by green forest" 
+            className="w-full h-[350px] md:h-[480px] object-cover hover:scale-[1.01] transition-transform duration-500"
+          />
+          <div className="p-4 bg-slate-900 text-slate-300 text-xs md:text-sm font-medium flex items-center gap-2">
+            <Info className="w-4 h-4 text-indigo-400" />
+            <span>Actual photograph of the beautiful, clean TTD guest house and stone cottages cluster nestled in the green Seshachalam hills at Tirumala.</span>
+          </div>
+        </div>
+      </section>
+
       {/* Accommodation Warning Alert */}
       <section className="container mx-auto max-w-6xl px-4 mt-8">
         <Alert className="border-indigo-500/20 bg-indigo-500/5 text-slate-800">

@@ -178,6 +178,21 @@ export default function DarshanGuidePage() {
         </div>
       </section>
 
+      {/* Scenic Location Image Banner */}
+      <section className="container mx-auto max-w-6xl px-4 mt-8">
+        <div className="rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-white">
+          <img 
+            src="/tirumala-darshan.png" 
+            alt="Scenic Golden Spires of Tirumala Venkateswara Temple" 
+            className="w-full h-[350px] md:h-[480px] object-cover hover:scale-[1.01] transition-transform duration-500"
+          />
+          <div className="p-4 bg-slate-900 text-slate-300 text-xs md:text-sm font-medium flex items-center gap-2">
+            <Info className="w-4 h-4 text-orange-400" />
+            <span>Actual photograph of the sacred golden Ananda Nilayam Gopuram of the main Tirumala Venkateswara Temple.</span>
+          </div>
+        </div>
+      </section>
+
       {/* Fraud Alert & Transport Disclaimer Strip */}
       <section className="container mx-auto max-w-6xl px-4 mt-8">
         <Alert className="border-orange-500/30 bg-orange-500/5 text-slate-800 shadow-sm">

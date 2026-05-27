@@ -89,6 +89,21 @@ export default function LocalTemplesGuidePage() {
         </div>
       </section>
 
+      {/* Scenic Location Image Banner */}
+      <section className="container mx-auto max-w-6xl px-4 mt-8">
+        <div className="rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-white">
+          <img 
+            src="/tiruchanur-temple.png" 
+            alt="Scenic Padmavathi Ammavari Temple at Tiruchanur" 
+            className="w-full h-[350px] md:h-[480px] object-cover hover:scale-[1.01] transition-transform duration-500"
+          />
+          <div className="p-4 bg-slate-900 text-slate-300 text-xs md:text-sm font-medium flex items-center gap-2">
+            <Info className="w-4 h-4 text-orange-400" />
+            <span>Actual photograph of the sacred Goddess Padmavathi Ammavari Temple at Tiruchanur reflecting inside the holy Pushkarini tank.</span>
+          </div>
+        </div>
+      </section>
+
       {/* Pilgrimage Advisory Alert */}
       <section className="container mx-auto max-w-6xl px-4 mt-8">
         <Alert className="border-amber-500/20 bg-amber-500/5 text-slate-800">
