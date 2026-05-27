@@ -10,6 +10,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/pilgrimage-packages',
     '/airport-transfers',
     '/outstation',
+    '/chennai-to-tirupati-taxi',
+    '/bangalore-to-tirupati-taxi',
     '/services',
     '/about',
     '/contact',

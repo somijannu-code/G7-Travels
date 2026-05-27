@@ -17,7 +17,8 @@ export default function OutstationPage() {
       oneWay: '₹4,500',
       roundTrip: '₹8,000',
       highlights: ['Marina Beach', 'Kapaleeshwarar Temple', 'Fort St. George'],
-      popular: true
+      popular: true,
+      link: '/chennai-to-tirupati-taxi'
     },
     {
       name: 'Hyderabad',
@@ -39,7 +40,8 @@ export default function OutstationPage() {
       oneWay: '₹8,000',
       roundTrip: '₹15,000',
       highlights: ['Bangalore Palace', 'Cubbon Park', 'ISKCON Temple'],
-      popular: true
+      popular: true,
+      link: '/bangalore-to-tirupati-taxi'
     },
     {
       name: 'Vijayawada',
@@ -135,7 +137,26 @@ export default function OutstationPage() {
                     </span>
                   </div>
                 </div>
-                <Button className="w-full">Book Now</Button>
+                <div className="flex gap-3 pt-2">
+                  {dest.link ? (
+                    <>
+                      <Link href={dest.link} className="flex-1">
+                        <Button variant="outline" className="w-full font-bold border-orange-500 text-orange-600 hover:bg-orange-50">
+                          Route Guide
+                        </Button>
+                      </Link>
+                      <Link href="/book-ride" className="flex-1">
+                        <Button className="w-full font-bold bg-orange-600 hover:bg-orange-700 text-white">
+                          Book Cab
+                        </Button>
+                      </Link>
+                    </>
+                  ) : (
+                    <Link href="/book-ride" className="w-full">
+                      <Button className="w-full font-bold bg-orange-600 hover:bg-orange-700 text-white">Book Now</Button>
+                    </Link>
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}
