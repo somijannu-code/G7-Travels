@@ -55,6 +55,8 @@ export function Footer() {
               <li><Link href="/temple-combo-guide" className="hover:text-orange-400 transition-colors">Kanipakam & Vellore Tour</Link></li>
               <li><Link href="/local-temples-guide" className="hover:text-orange-400 transition-colors">Local Temples Tour</Link></li>
               <li><Link href="/chandragiri-guide" className="hover:text-orange-400 transition-colors">Chandragiri Fort Guide</Link></li>
+              <li><Link href="/accommodation-guide" className="hover:text-orange-400 transition-colors">Tirumala Room Booking & Stays</Link></li>
+              <li><Link href="/temple-sevas-guide" className="hover:text-orange-400 transition-colors">TTD Arjitha Sevas & Kalyan</Link></li>
             </ul>
           </div>
 

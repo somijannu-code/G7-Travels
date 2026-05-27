@@ -22,6 +22,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/temple-combo-guide',
     '/local-temples-guide',
     '/chandragiri-guide',
+    '/accommodation-guide',
+    '/temple-sevas-guide',
     '/faqs',
     '/safety',
     '/partner-with-us',
