@@ -88,6 +88,21 @@ export default function TempleComboGuidePage() {
         </div>
       </section>
 
+      {/* Scenic Location Image Banner */}
+      <section className="container mx-auto max-w-6xl px-4 mt-8">
+        <div className="rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-white">
+          <img 
+            src="/vellore-golden-temple.png" 
+            alt="Scenic Vellore Sripuram Lakshmi Narayani Golden Temple" 
+            className="w-full h-[350px] md:h-[480px] object-cover hover:scale-[1.01] transition-transform duration-500"
+          />
+          <div className="p-4 bg-slate-900 text-slate-300 text-xs md:text-sm font-medium flex items-center gap-2">
+            <Info className="w-4 h-4 text-orange-400" />
+            <span>Actual photograph of the breathtaking Sripuram Golden Temple in Vellore, gilded with over 1.5 tons of pure gold leaf.</span>
+          </div>
+        </div>
+      </section>
+
       {/* Border Advisory Alert */}
       <section className="container mx-auto max-w-6xl px-4 mt-8">
         <Alert className="border-indigo-500/20 bg-indigo-500/5 text-slate-800">

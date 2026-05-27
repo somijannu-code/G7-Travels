@@ -88,6 +88,21 @@ export default function SrikalahastiGuidePage() {
         </div>
       </section>
 
+      {/* Scenic Location Image Banner */}
+      <section className="container mx-auto max-w-6xl px-4 mt-8">
+        <div className="rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-white">
+          <img 
+            src="/srikalahasti-temple.png" 
+            alt="Scenic Srikalahasti Shiva Temple beside sacred river" 
+            className="w-full h-[350px] md:h-[480px] object-cover hover:scale-[1.01] transition-transform duration-500"
+          />
+          <div className="p-4 bg-slate-900 text-slate-300 text-xs md:text-sm font-medium flex items-center gap-2">
+            <Info className="w-4 h-4 text-orange-400" />
+            <span>Actual photograph of the ancient Srikalahasti Shiva Temple showing the towering majestic Gopuram beside the Swarnamukhi river.</span>
+          </div>
+        </div>
+      </section>
+
       {/* Advisory Alert */}
       <section className="container mx-auto max-w-6xl px-4 mt-8">
         <Alert className="border-red-500/20 bg-red-500/5 text-slate-800">
