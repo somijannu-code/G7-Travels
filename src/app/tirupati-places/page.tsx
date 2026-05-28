@@ -29,7 +29,8 @@ export default function TirupatiPlacesPage() {
       tickets: 'Free / ₹300 Special SED ticket',
       bestTime: 'October to March (Pleasant weather)',
       desc: 'The world-famous hilltop shrine of Lord Venkateswara (Balaji). Set atop the Saptagiri (seven hills) of the Seshachalam range, it stands as the most visited pilgrimage center in India. Enforces a strict traditional dress code.',
-      image: '/tirupati-god.png'
+      image: '/tirumala-darshan.png',
+      guideLink: '/darshan-guide'
     },
     {
       name: 'Srikalahasti Shiva Temple',
@@ -40,7 +41,8 @@ export default function TirupatiPlacesPage() {
       tickets: 'Free entry / Pooja ticket (₹500 to ₹2,500)',
       bestTime: 'Year-round (Special poojas on Sundays & Wednesdays)',
       desc: 'Dedicated to Lord Shiva as Srikalahasteeswara, representing the element of Air (Vayu Lingam). Famous worldwide for performing the Rahu-Ketu Sarpa Dosha Pooja. The temple architecture features massive, historic gopurams.',
-      image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&q=80'
+      image: '/srikalahasti-temple.png',
+      guideLink: '/srikalahasti-guide'
     },
     {
       name: 'Talakona Scenic Waterfalls',
@@ -51,7 +53,8 @@ export default function TirupatiPlacesPage() {
       tickets: '₹50 per person entry fee',
       bestTime: 'September to January (Post-monsoon cascade)',
       desc: 'The highest waterfall in Andhra Pradesh, cascading down from a height of 270 feet. Nestled inside the dense Sri Venkateswara National Park, it features scenic forest trails, a canopy rope walk, and beautiful ecotourism bathing zones.',
-      image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80'
+      image: '/talakona-waterfall.png',
+      guideLink: '/talakona-guide'
     },
     {
       name: 'Chandragiri Historical Fort',
@@ -62,7 +65,8 @@ export default function TirupatiPlacesPage() {
       tickets: '₹20 Entry / ₹100 Sound & Light Show',
       bestTime: '4:00 PM to 8:00 PM (to catch the evening light show)',
       desc: 'An 11th-century fort built by the Yadava Raya dynasty, later serving as the fortified capital of the Vijayanagara Empire. Features outstanding Raja Mahal and Rani Mahal palaces showing classic Indo-Saracenic stone architecture.',
-      image: 'https://images.unsplash.com/photo-1608958416710-df9827367df2?w=800&q=80'
+      image: '/chandragiri-palace.png',
+      guideLink: '/chandragiri-guide'
     },
     {
       name: 'Kanipakam Varasiddhi Vinayaka Temple',
@@ -73,7 +77,8 @@ export default function TirupatiPlacesPage() {
       tickets: 'Free / ₹100 Special Entry ticket',
       bestTime: 'August/September (Ganesh Chaturthi celebrations)',
       desc: 'A highly sacred temple dedicated to a self-manifested (Swayambhu) idol of Lord Ganesha in a well. Miraculously, the water in the well is perennial and is distributed as sacred teertham. Known as the temple of truth.',
-      image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&q=80'
+      image: '/kanipakam-temple.png',
+      guideLink: '/kanipakam-guide'
     },
     {
       name: 'Sri Padmavathi Ammavari Temple (Tiruchanur)',
@@ -84,7 +89,8 @@ export default function TirupatiPlacesPage() {
       tickets: 'Free / ₹100 Special Entry',
       bestTime: 'Year-round (Best visited before ascending Tirumala)',
       desc: 'Dedicated to Goddess Padmavathi (Alamelu Manga), the divine consort of Lord Venkateswara. Vedic tradition holds that pilgrims must seek the blessings of the Goddess in Tiruchanur before entering the hilltop shrine of Tirumala.',
-      image: 'https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=800&q=80'
+      image: '/tiruchanur-temple.png',
+      guideLink: '/local-temples-guide'
     }
   ]
 
@@ -189,15 +195,22 @@ export default function TirupatiPlacesPage() {
                 </CardContent>
               </div>
 
-              <div className="p-6 pt-0 border-t border-slate-100 mt-4">
+              <div className="p-6 pt-0 border-t border-slate-100 mt-4 space-y-3">
+                {place.guideLink && (
+                  <Link href={place.guideLink} className="w-full block">
+                    <Button className="w-full font-bold bg-orange-600 hover:bg-orange-700 text-white flex items-center justify-center gap-1.5 shadow-sm">
+                      View Travel Guide <ArrowRight className="w-4 h-4" />
+                    </Button>
+                  </Link>
+                )}
                 <a 
                   href={`https://wa.me/919014878313?text=${encodeURIComponent(`Hi G7 Travels, I would like to book a taxi tour to visit "${place.name}". Please provide availability and rates.`)}`}
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-full"
+                  className="w-full block"
                 >
-                  <Button variant="outline" className="w-full border-slate-350 hover:bg-orange-500 hover:text-white text-slate-700 font-bold flex items-center justify-center gap-1.5">
-                    Book Cab for this Spot <ArrowRight className="w-4 h-4" />
+                  <Button variant="outline" className="w-full border-slate-300 hover:bg-slate-50 text-slate-700 font-bold flex items-center justify-center gap-1.5">
+                    Book Sightseeing Cab
                   </Button>
                 </a>
               </div>
