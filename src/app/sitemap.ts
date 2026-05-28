@@ -12,6 +12,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/outstation',
     '/chennai-to-tirupati-taxi',
     '/bangalore-to-tirupati-taxi',
+    '/hyderabad-to-tirupati-taxi',
+    '/vijayawada-to-tirupati-taxi',
     '/services',
     '/about',
     '/contact',

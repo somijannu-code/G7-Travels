@@ -29,7 +29,8 @@ export default function OutstationPage() {
       oneWay: '₹12,000',
       roundTrip: '₹22,000',
       highlights: ['Charminar', 'Golconda Fort', 'Hussain Sagar Lake'],
-      popular: false
+      popular: false,
+      link: '/hyderabad-to-tirupati-taxi'
     },
     {
       name: 'Bangalore',
@@ -52,7 +53,8 @@ export default function OutstationPage() {
       oneWay: '₹9,000',
       roundTrip: '₹16,000',
       highlights: ['Kanaka Durga Temple', 'Prakasam Barrage', 'Bhavani Island'],
-      popular: false
+      popular: false,
+      link: '/vijayawada-to-tirupati-taxi'
     }
   ]
 
