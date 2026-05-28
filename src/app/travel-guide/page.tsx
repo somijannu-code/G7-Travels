@@ -15,7 +15,8 @@ import {
   HelpCircle,
   FileText,
   BookmarkCheck,
-  Compass
+  Compass,
+  Info
 } from 'lucide-react'
 
 export default function TirupatiTravelGuidePage() {
